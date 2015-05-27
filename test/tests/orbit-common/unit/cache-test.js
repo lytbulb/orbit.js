@@ -1,8 +1,8 @@
-import 'tests/test-helper';
 import Orbit from 'orbit/main';
 import Cache from 'orbit-common/cache';
 import Schema from 'orbit-common/schema';
 import { Promise, on } from 'rsvp';
+import { op } from 'tests/test-helper';
 
 var schema,
     cache;
@@ -154,6 +154,32 @@ test("#transform tracks refs by default, and clears them from hasMany relationsh
 
   equal(cache.retrieve('/planet/p1/__rel/moons/m1'), null, 'Io has been cleared from Jupiter');
   equal(cache.retrieve('/planet/p1/__rel/moons/m2'), null, 'Europa has been cleared from Jupiter');
+});
+
+test("#transform - add record doesn't add reverse links for undefined hasMany links", function(){
+  cache = new Cache(schema);
+
+  var jupiter = {id: 'planet1', name: "Jupiter"};
+  var normalized = schema.normalize('planet', jupiter, {initializeLinks: false});
+  var addJupiterOperation = op('add', 'planet/planet1', normalized);
+
+  cache.transform(addJupiterOperation);
+
+  var revLinks = cache._revLink('planet', 'planet1');
+  equal(revLinks.moons, undefined, 'revlink not added for planet1.moons');
+});
+
+test("#transform - add record doesn't add reverse links for undefined hasOne links", function(){
+  cache = new Cache(schema);
+
+  var europa = {id: 'moon1', name: "Europa"};
+  var normalized = schema.normalize('moon', europa, {initializeLinks: false});
+  var addEuropaOperation = op('add', 'moon/moon1', normalized);
+
+  cache.transform(addEuropaOperation);
+
+  var revLinks = cache._revLink('moon', 'moon1');
+  equal(revLinks.planet, undefined, 'revlink not added for moon1.planet');
 });
 
 test("does not add link to hasMany if record doesn't exist", function(){

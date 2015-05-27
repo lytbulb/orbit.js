@@ -1,4 +1,5 @@
 import Orbit from 'orbit/main';
+import OC from 'orbit-common/main';
 import Schema from 'orbit-common/schema';
 import { Promise } from 'rsvp';
 import { uuid } from 'orbit/lib/uuid';
@@ -288,6 +289,29 @@ test("#normalize initializes a record's links", function() {
 
   deepEqual(earth.__rel.moons, {}, 'hasMany relationship has been seeded with an empty object');
   strictEqual(moon.__rel.planet, null, 'default has not been set - should be null');
+});
+
+test("#normalize - with option initializeLinks=false doesn't initialize links", function(){
+  var schema = new Schema({
+    models: {
+      planet: {
+        links: {
+          moons: {type: 'hasMany', model: 'moon', inverse: 'planet'}
+        }
+      },
+      moon: {
+        links: {
+          planet: {type: 'hasOne', model: 'planet', inverse: 'moons'}
+        }
+      }
+    }
+  });
+
+  var jupiterWithoutLinks = {id: 'planet1', name: "Jupiter"};
+  var normalized = schema.normalize('planet', jupiterWithoutLinks, {initializeLinks: false});
+
+  ok(normalized.__rel, 'initialize links container');
+  equal(normalized.__rel.moons, OC.LINK_NOT_INITIALIZED, "didn't initialize link");
 });
 
 test("#normalize will not overwrite data set as attributes", function() {

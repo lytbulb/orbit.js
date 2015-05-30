@@ -67,7 +67,6 @@ module('OC - OperationProcessors - RelatedInverseLinks', {
 });
 
 function operationsShouldMatch(actualOperations, expectedOperations){
-  console.log("actual", actualOperations);
   equal(actualOperations.length, expectedOperations.length, 'Same number of operations');
 
   for(var i = 0; i < actualOperations.length; i++){

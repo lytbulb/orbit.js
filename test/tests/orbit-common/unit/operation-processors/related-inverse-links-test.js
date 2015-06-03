@@ -76,6 +76,47 @@ function operationsShouldMatch(actualOperations, expectedOperations){
   }
 }
 
+test('add record with links', function(){
+  var saturn = { id: 'saturn', name: "Saturn", __rel: {} };
+  var europa = { id: 'europa', name: "Europa", __rel: {} };
+  var jupiter = { id: 'jupiter', name: "Jupiter", __rel: { moons: { 'europa': true }, previous: 'saturn' } };
+
+  cache.reset({
+    planet: { saturn: saturn },
+    moon: { europa: europa }
+  });
+
+  operationsShouldMatch(
+    processor.process(
+      op('add', ['planet', jupiter.id], jupiter)
+    ),
+    [
+      op('replace', ['moon', 'europa', '__rel', 'planet'], jupiter.id),
+      op('replace', ['planet', saturn.id, '__rel', 'next'], jupiter.id)
+    ]
+  );
+});
+
+test('remove record with links', function(){
+  var saturn = { id: 'saturn', name: "Saturn", __rel: { next: 'jupiter'} };
+  var europa = { id: 'europa', name: "Europa", __rel: { planet: 'saturn' } };
+  var jupiter = { id: 'jupiter', name: "Jupiter", __rel: { moons: { 'europa': true }, previous: 'saturn' } };
+
+  cache.reset({
+    planet: { saturn: saturn, jupiter },
+    moon: { europa: europa }
+  });
+
+  operationsShouldMatch(
+    processor.process(
+      op('remove', ['planet', jupiter.id])
+    ),
+    [
+      op('replace', ['moon', 'europa', '__rel', 'planet'], null),
+      op('replace', ['planet', saturn.id, '__rel', 'next'], null)
+    ]
+  );
+});
 
 test('add to hasOne => hasMany', function(){
   var saturn = { id: 'saturn', name: "Saturn", __rel: { moons: { 'titan': true } } };

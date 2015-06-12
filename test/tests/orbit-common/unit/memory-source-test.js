@@ -629,7 +629,7 @@ test("#addLink - replacing hasOne relationship removes record from previous hasM
   }));
 });
 
-test("#addLink - throws LinkNotInitializedException if attempting to modify unitialized link", function(){
+test("#addLink - initializes link if attempting to modify unitialized link", function(){
   stop();
 
   var jupiterDetails = {id: 'planet1', name: "Jupiter"};
@@ -646,14 +646,12 @@ test("#addLink - throws LinkNotInitializedException if attempting to modify unit
     source.transform(addEuropaOperation)
 
   ]).then(function(){
-    source.addLink('planet', 'planet1', 'moons', 'moon1').then(function(){
-      start();
-      ok(false, 'should have thrown a LinkNotInitializedException');
+    return source.addLink('planet', 'planet1', 'moons', 'moon1');
 
-    }, function(error){
-      start();
-      ok(error instanceof LinkNotInitializedException, 'LinkNotInitializedException thrown');
-    });
+  }).then(function(){
+    start();
+    deepEqual(source.retrieve(['planet', 'planet1', '__rel', 'moons']), {'moon1': true});
+
   });
 });
 
@@ -747,7 +745,7 @@ test("#updateLink - can link and unlink records in a many-to-one relationship vi
   });
 });
 
-test("#updateLink - throws LinkNotInitializedException if attempting to modify unitialized link", function(){
+test("#updateLink - initializes link if attempting to modify unitialized link", function(){
   stop();
 
   var jupiterDetails = {id: 'planet1', name: "Jupiter"};
@@ -764,18 +762,16 @@ test("#updateLink - throws LinkNotInitializedException if attempting to modify u
     source.transform(addEuropaOperation)
 
   ]).then(function(){
-    source.updateLink('moon', 'moon1', 'planet', 'planet1').then(function(){
-      start();
-      ok(false, 'should have thrown a LinkNotInitializedException');
+    return source.updateLink('moon', 'moon1', 'planet', 'planet1');
 
-    }, function(error){
-      start();
-      ok(error instanceof LinkNotInitializedException, 'LinkNotInitializedException thrown');
-    });
+  }).then(function(){
+    start();
+    deepEqual(source.retrieve(['moon', 'moon1', '__rel', 'planet']), 'planet1');
+
   });
 });
 
-test("#removeLink - throws LinkNotInitializedException if attempting to modify unitialized link", function(){
+test("#removeLink - should not initialize link if attempting to modify unitialized link", function(){
   stop();
 
   var jupiterDetails = {id: 'planet1', name: "Jupiter"};
@@ -792,15 +788,12 @@ test("#removeLink - throws LinkNotInitializedException if attempting to modify u
     source.transform(addEuropaOperation)
 
   ]).then(function(){
-    source.removeLink('moon', 'moon1', 'planet', 'planet1').then(function(){
-      start();
-      ok(false, 'should have thrown a LinkNotInitializedException');
+    return source.removeLink('moon', 'moon1', 'planet', 'planet1');
 
-    }, function(error){
-      start();
-      ok(error instanceof LinkNotInitializedException, 'LinkNotInitializedException thrown');
+  }).then(function(){
+    start();
+    equal(source.retrieve(['moon', 'moon1', 'planet']), undefined);
 
-    });
   });
 });
 

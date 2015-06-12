@@ -67,6 +67,8 @@ module('OC - OperationProcessors - RelatedInverseLinks', {
 });
 
 function operationsShouldMatch(actualOperations, expectedOperations){
+  console.log('actual', actualOperations);
+  console.log('expected', expectedOperations);
   equal(actualOperations.length, expectedOperations.length, 'Same number of operations');
 
   for(var i = 0; i < actualOperations.length; i++){
@@ -177,7 +179,9 @@ test('replace hasOne => unitialized hasMany', function(){
     processor.process(
       op('replace', ['moon', europa.id, '__rel', 'planet'], saturn.id)
     ),
-    []
+    [
+      op('add', ['planet', 'saturn', '__rel', 'moons', 'europa'], true)
+    ]
   );
 });
 
@@ -384,7 +388,9 @@ test('add to hasOne => unitialized hasOne', function(){
     processor.process(
       op('add', ['planet', earth.id, '__rel', 'next'], saturn.id)
     ),
-    []
+    [
+      op('replace', ['planet', saturn.id, '__rel', 'previous'], 'earth')
+    ]
   );
 });
 

@@ -82,6 +82,7 @@ test("consecutive transforms can be applied to one source and should be automati
     value: 'Earth'
 
   }).then(function() {
+    console.log("setup done");
     source1.find('planet', '123').then(function(planet1) {
       source2.find('planet', '123').then(function(planet2) {
         start();

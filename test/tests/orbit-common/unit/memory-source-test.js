@@ -1,13 +1,15 @@
 import Orbit from 'orbit/main';
+import OC from 'orbit-common/main';
 import Schema from 'orbit-common/schema';
 import MemorySource from 'orbit-common/memory-source';
 import Source from 'orbit-common/source';
 import { all, Promise } from 'rsvp';
-import { RecordNotFoundException, LinkNotFoundException } from 'orbit-common/lib/exceptions';
+import { RecordNotFoundException, LinkNotInitializedException } from 'orbit-common/lib/exceptions';
 import { spread } from 'orbit/lib/functions';
-import 'tests/test-helper';
+import { op } from 'tests/test-helper';
 
-var source;
+var source,
+    schema;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -15,7 +17,7 @@ module("OC - MemorySource", {
   setup: function() {
     Orbit.Promise = Promise;
 
-    var schema = new Schema({
+    schema = new Schema({
       models: {
         planet: {
           attributes: {
@@ -627,6 +629,32 @@ test("#addLink - replacing hasOne relationship removes record from previous hasM
   }));
 });
 
+test("#addLink - initializes link if attempting to modify unitialized link", function(){
+  stop();
+
+  var jupiterDetails = {id: 'planet1', name: "Jupiter"};
+  var normalizedJupiter = schema.normalize('planet', jupiterDetails, {initializeLinks: false});
+
+  var europaDetails = {id: 'moon1', name: "Europa"};
+  var normalizedEuropa = schema.normalize('moon', europaDetails, {initializeLinks: false});
+
+  var addJupiterOperation = op('add', 'planet/planet1', normalizedJupiter);
+  var addEuropaOperation = op('add', 'moon/moon1', normalizedEuropa);
+
+  all([
+    source.transform(addJupiterOperation),
+    source.transform(addEuropaOperation)
+
+  ]).then(function(){
+    return source.addLink('planet', 'planet1', 'moons', 'moon1');
+
+  }).then(function(){
+    start();
+    deepEqual(source.retrieve(['planet', 'planet1', '__rel', 'moons']), {'moon1': true});
+
+  });
+});
+
 
 test("#updateLink - will fail when replacing records in a many-to-one relationship unless the linkDef is flagged as `actsAsSet`", function() {
   expect(2);
@@ -713,6 +741,58 @@ test("#updateLink - can link and unlink records in a many-to-one relationship vi
     equal(Object.keys(jupiter.__rel.moons).length, 1, 'Jupiter has one moon after linking');
     ok(jupiter.__rel.moons[io.id], 'Jupiter\'s moon is Io');
     equal(io.__rel.planet, jupiter.id, 'Io\'s planet is Jupiter');
+
+  });
+});
+
+test("#updateLink - initializes link if attempting to modify unitialized link", function(){
+  stop();
+
+  var jupiterDetails = {id: 'planet1', name: "Jupiter"};
+  var normalizedJupiter = schema.normalize('planet', jupiterDetails, {initializeLinks: false});
+
+  var europaDetails = {id: 'moon1', name: "Europa"};
+  var normalizedEuropa = schema.normalize('moon', europaDetails, {initializeLinks: false});
+
+  var addJupiterOperation = op('add', 'planet/planet1', normalizedJupiter);
+  var addEuropaOperation = op('add', 'moon/moon1', normalizedEuropa);
+
+  all([
+    source.transform(addJupiterOperation),
+    source.transform(addEuropaOperation)
+
+  ]).then(function(){
+    return source.updateLink('moon', 'moon1', 'planet', 'planet1');
+
+  }).then(function(){
+    start();
+    deepEqual(source.retrieve(['moon', 'moon1', '__rel', 'planet']), 'planet1');
+
+  });
+});
+
+test("#removeLink - should not initialize link if attempting to modify unitialized link", function(){
+  stop();
+
+  var jupiterDetails = {id: 'planet1', name: "Jupiter"};
+  var normalizedJupiter = schema.normalize('planet', jupiterDetails, {initializeLinks: false});
+
+  var europaDetails = {id: 'moon1', name: "Europa"};
+  var normalizedEuropa = schema.normalize('moon', europaDetails, {initializeLinks: false});
+
+  var addJupiterOperation = op('add', 'planet/planet1', normalizedJupiter);
+  var addEuropaOperation = op('add', 'moon/moon1', normalizedEuropa);
+
+  all([
+    source.transform(addJupiterOperation),
+    source.transform(addEuropaOperation)
+
+  ]).then(function(){
+    return source.removeLink('moon', 'moon1', 'planet', 'planet1');
+
+  }).then(function(){
+    start();
+    equal(source.retrieve(['moon', 'moon1', 'planet']), undefined);
 
   });
 });
@@ -891,24 +971,49 @@ test("#findLinked - can find an empty set of has-many linked values", function()
   });
 });
 
-test("#findLink - returns LinkNotFoundException for a link that doesn't exist", function() {
+test("#findLinked - throws LinkNotInitializedException when a link hasn't been initialized", function() {
   expect(2);
 
   equal(source.length('planet'), 0, 'source should be empty');
 
-  var jupiter,
+  var jupiter = {id: 'jupiter', name: 'Jupiter', classification: 'gas giant', atmosphere: true, __rel: { moons: OC.LINK_NOT_INITIALIZED } },
       io;
 
-  stop();
-  source.add('planet', {name: 'Jupiter', classification: 'gas giant', atmosphere: true}).then(function(planet) {
-    jupiter = planet;
+  source.reset({
+    planet: { jupiter: jupiter }
+  });
 
-    source.findLink('planet', jupiter, 'bogus').then(function(foundLink) {
-      ok(false, 'no link should be found');
-    }, function(e) {
-      start();
-      ok(e instanceof LinkNotFoundException, 'LinkNotFoundException thrown');
-    });
+  stop();
+  source.findLinked('planet', jupiter, 'moons').then(function(foundLink) {
+    start();
+    ok(false, 'no link should be found');
+
+  }, function(e) {
+    start();
+    ok(e instanceof LinkNotInitializedException, 'LinkNotInitializedException thrown');
+  });
+});
+
+test("#findLink - throws LinkNotInitializedException when a link hasn't been initialized", function() {
+  expect(2);
+
+  equal(source.length('planet'), 0, 'source should be empty');
+
+  var jupiter = {id: 'jupiter', name: 'Jupiter', classification: 'gas giant', atmosphere: true, __rel: { moons: OC.LINK_NOT_INITIALIZED } },
+      io;
+
+  source.reset({
+    planet: { jupiter: jupiter }
+  });
+
+  stop();
+  source.findLink('planet', jupiter, 'moons').then(function(foundLink) {
+    start();
+    ok(false, 'no link should be found');
+
+  }, function(e) {
+    start();
+    ok(e instanceof LinkNotInitializedException, 'LinkNotInitializedException thrown');
   });
 });
 

@@ -88,8 +88,8 @@ test('identifies addHasMany with null value as invalid', function(){
   identifiesAsInvalid(op('add', 'planet/planet1/__rel/moons', null));
 });
 
-test('identifies addHasMany with undefined value as invalid', function(){
-  identifiesAsInvalid(op('add', 'planet/planet1/__rel/moons', undefined));
+test('identifies addHasMany with undefined value', function(){
+  identifies(op('add', 'planet/planet1/__rel/moons', undefined), 'addHasMany');
 });
 
 test('identifies replaceHasMany with populated value', function(){
@@ -101,7 +101,7 @@ test('identifies replaceHasMany with null value as invalid', function(){
 });
 
 test('identifies replaceHasMany with undefined value as invalid', function(){
-  identifiesAsInvalid(op('replace', 'planet/planet1/__rel/moons', undefined));
+  identifies(op('replace', 'planet/planet1/__rel/moons', undefined), 'replaceHasMany');
 });
 
 test('identifies removeHasMany', function(){

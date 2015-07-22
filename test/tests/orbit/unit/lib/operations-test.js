@@ -187,6 +187,18 @@ test("can coalesce remove operation into record operation", function(){
   );
 });
 
+test("can coalesce replace link operation into remove record", function(){
+  shouldCoalesceOperations(
+    [
+      op('remove', ['contact', '1234'] ),
+      op('replcae', ['contact', '1234', '__rel', 'address'], null)
+    ],
+    [
+      op('remove', ['contact', '1234'] )
+    ]
+  );  
+});
+
 test("record link takes precedence over remove operation", function(){
   shouldCoalesceOperations(
     [

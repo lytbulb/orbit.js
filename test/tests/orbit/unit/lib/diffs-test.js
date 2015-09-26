@@ -1,9 +1,9 @@
 import { diffs } from 'orbit/lib/diffs';
 
-module("Orbit - Lib - diffs", {
+module('Orbit - Lib - diffs', {
 });
 
-test("#diffs return `undefined` for matching objects", function() {
+test('#diffs return `undefined` for matching objects', function() {
   var a, b;
 
   a = {name: 'Jupiter', classification: 'gas giant'};
@@ -27,7 +27,7 @@ test("#diffs return `undefined` for matching objects", function() {
   deepEqual(diffs(a, b), undefined);
 });
 
-test("#diffs generates `add` patches when comparing two objects (as per rfc 6902)", function() {
+test('#diffs generates `add` patches when comparing two objects (as per rfc 6902)', function() {
   var a, b;
 
   // RFC 6902 - Appendix A.1.  Adding an Object Member
@@ -50,7 +50,7 @@ test("#diffs generates `add` patches when comparing two objects (as per rfc 6902
 
   deepEqual(diffs(a, b),
             [{op: 'add', path: '/foo/1', value: 'qux'},
-             {op: 'add', path: '/foo/2', value: 'dux'}]);
+             {op: 'add', path: '/foo/2', value: 'dux'},]);
 
   // Adding multiple array elements
   a = {foo: ['BAR', 'BAZ']};
@@ -59,7 +59,7 @@ test("#diffs generates `add` patches when comparing two objects (as per rfc 6902
   deepEqual(diffs(a, b),
             [{op: 'add', path: '/foo/1', value: 'qux'},
              {op: 'add', path: '/foo/2', value: 'dux'},
-             {op: 'add', path: '/foo/4', value: 'flux'}]);
+             {op: 'add', path: '/foo/4', value: 'flux'},]);
 
   // Misc tests
   a = {name: 'Jupiter', classification: 'gas giant'};
@@ -76,7 +76,7 @@ test("#diffs generates `add` patches when comparing two objects (as per rfc 6902
 
 });
 
-test("#diffs generates `remove` patches when comparing two objects (as per rfc 6902)", function() {
+test('#diffs generates `remove` patches when comparing two objects (as per rfc 6902)', function() {
   var a, b;
 
   // RFC 6902 - Appendix A.4. Removing an Array Element
@@ -94,7 +94,7 @@ test("#diffs generates `remove` patches when comparing two objects (as per rfc 6
             [{op: 'remove', path: 'planets/1/id'}]);
 });
 
-test("#diffs generates `replace` patches when comparing two objects (as per rfc 6902)", function() {
+test('#diffs generates `replace` patches when comparing two objects (as per rfc 6902)', function() {
   var a, b;
 
   // RFC 6902 - Appendix A.5. Replacing a Value
@@ -117,10 +117,10 @@ test("#diffs generates `replace` patches when comparing two objects (as per rfc 
   deepEqual(diffs(a, b, {basePath: 'planets/1'}),
             [{op: 'replace', path: 'planets/1/id/b', value: '3'},
              {op: 'replace', path: 'planets/1/name', value: 'Earth'},
-             {op: 'replace', path: 'planets/1/classification', value: 'terrestrial'}]);
+             {op: 'replace', path: 'planets/1/classification', value: 'terrestrial'},]);
 });
 
-test("#diffs ignores specified items with `ignore` option", function() {
+test('#diffs ignores specified items with `ignore` option', function() {
   var a, b;
 
   a = {id: {a: '1', b: '2'}, name: 'Jupiter', classification: 'gas giant'};
@@ -131,38 +131,38 @@ test("#diffs ignores specified items with `ignore` option", function() {
             'specified items are ignored in delta');
 });
 
-test("#diffs generates `replace` patch when comparing two dates", function() {
+test('#diffs generates `replace` patch when comparing two dates', function() {
   var a = new Date(1428555600000),
       b = new Date(1428555601000);
 
-  deepEqual(diffs(a,b, {basePath: 'planets/1/birthDate'}),
+  deepEqual(diffs(a, b, {basePath: 'planets/1/birthDate'}),
             [{op: 'replace', path: 'planets/1/birthDate', value: b}],
             'dates are replaced');
 });
 
-test("#diffs generates undefined patch when comparing two equal dates", function() {
+test('#diffs generates undefined patch when comparing two equal dates', function() {
   var a = new Date(1428555600000),
       b = new Date(1428555600000);
 
-  deepEqual(diffs(a,b, {basePath: 'planets/1/birthDate'}),
+  deepEqual(diffs(a, b, {basePath: 'planets/1/birthDate'}),
             undefined,
             'dates are the same');
 });
 
-test("#diffs generates `replace` patch when string is replaced by a date", function() {
-  var a = "string",
+test('#diffs generates `replace` patch when string is replaced by a date', function() {
+  var a = 'string',
       b = new Date(1428555600000);
 
-  deepEqual(diffs(a,b, {basePath: 'planets/1/birthDate'}),
+  deepEqual(diffs(a, b, {basePath: 'planets/1/birthDate'}),
             [{op: 'replace', path: 'planets/1/birthDate', value: b}],
             'string was replaced by date');
 });
 
-test("#diffs generates `replace` patch when date is replaced by a string", function() {
+test('#diffs generates `replace` patch when date is replaced by a string', function() {
   var a = new Date(1428555600000),
-      b = "string";
+      b = 'string';
 
-  deepEqual(diffs(a,b, {basePath: 'planets/1/birthDate'}),
+  deepEqual(diffs(a, b, {basePath: 'planets/1/birthDate'}),
             [{op: 'replace', path: 'planets/1/birthDate', value: b}],
             'date was replaced by string');
 });

@@ -22,7 +22,7 @@ var testRequestConnector = function(actionName) {
     });
   };
 
-  test("a RequestConnector in `rescue` mode should call the primary source and, if successful, should not call the secondary source", function() {
+  test('a RequestConnector in `rescue` mode should call the primary source and, if successful, should not call the secondary source', function() {
     expect(4);
 
     requestConnector = new RequestConnector(primarySource,
@@ -56,7 +56,7 @@ var testRequestConnector = function(actionName) {
     });
   });
 
-  test("a RequestConnector in `rescue` mode should call the secondary source after an unsuccessful action on the primary source", function() {
+  test('a RequestConnector in `rescue` mode should call the secondary source after an unsuccessful action on the primary source', function() {
     expect(6);
 
     requestConnector = new RequestConnector(primarySource,
@@ -95,7 +95,7 @@ var testRequestConnector = function(actionName) {
     });
   });
 
-  test("a RequestConnector in `assist` mode should call the secondary source before any action on the primary source", function() {
+  test('a RequestConnector in `assist` mode should call the secondary source before any action on the primary source', function() {
     expect(5);
 
     requestConnector = new RequestConnector(primarySource,
@@ -133,7 +133,7 @@ var testRequestConnector = function(actionName) {
     });
   });
 
-  test("a RequestConnector in `assist` mode should call the secondary source, and if unsuccessful, the primary source will be called", function() {
+  test('a RequestConnector in `assist` mode should call the secondary source, and if unsuccessful, the primary source will be called', function() {
     expect(6);
 
     requestConnector = new RequestConnector(primarySource,
@@ -172,13 +172,13 @@ var testRequestConnector = function(actionName) {
     });
   });
 
-  test("a RequestConnector should connect calls that match the `type` filter", function() {
+  test('a RequestConnector should connect calls that match the `type` filter', function() {
     expect(6);
 
     requestConnector = new RequestConnector(primarySource,
                                             secondarySource,
                                             {mode: 'rescue',
-                                             types: ['planet']});
+                                             types: ['planet'],});
 
     var order = 0;
 
@@ -212,13 +212,13 @@ var testRequestConnector = function(actionName) {
     });
   });
 
-  test("a RequestConnector should not connect calls that don't match the `type` filter", function() {
+  test('a RequestConnector should not connect calls that don\'t match the `type` filter', function() {
     expect(4);
 
     requestConnector = new RequestConnector(primarySource,
                                             secondarySource,
                                             {mode: 'rescue',
-                                             types: ['planet']});
+                                             types: ['planet'],});
 
     var order = 0;
 
@@ -250,7 +250,7 @@ var testRequestConnector = function(actionName) {
     );
   });
 
-  test("Extension: RequestConnector._handlerFor should be used to handle", function() {
+  test('Extension: RequestConnector._handlerFor should be used to handle', function() {
     expect(6);
     var order = 0;
 
@@ -262,13 +262,12 @@ var testRequestConnector = function(actionName) {
           equal(this, secondarySource, 'called in context of secondary source');
           return failedOperation();
         };
-      }
+      },
     });
 
     requestConnector = new Extended(primarySource,
                                             secondarySource,
                                             {mode: 'rescue'});
-
 
     primarySource['_' + actionName] = function() {
       equal(++order, 1, '_' + actionName + ' triggered first for primary source');
@@ -297,7 +296,7 @@ var testRequestConnector = function(actionName) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-module("Orbit - RequestConnector", {
+module('Orbit - RequestConnector', {
   setup: function() {
     Orbit.Promise = Promise;
 
@@ -312,12 +311,13 @@ module("Orbit - RequestConnector", {
     if (requestConnector) {
       requestConnector.deactivate();
     }
+
     primarySource = null;
     secondarySource = null;
     requestConnector = null;
 
     Orbit.Promise = null;
-  }
+  },
 });
 
 testRequestConnector('find');

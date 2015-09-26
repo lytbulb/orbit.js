@@ -16,7 +16,7 @@ var source1,
 
 var counter = 0;
 
-module("Integration - Three Memory Source Sync (Blocking / Non-blocking)", {
+module('Integration - Three Memory Source Sync (Blocking / Non-blocking)', {
   setup: function() {
     Orbit.Promise = Promise;
 
@@ -25,17 +25,17 @@ module("Integration - Three Memory Source Sync (Blocking / Non-blocking)", {
       modelDefaults: {
         keys: {
           '__id': {primaryKey: true, defaultValue: uuid},
-          'id': {}
-        }
+          'id': {},
+        },
       },
       models: {
         planet: {
           attributes: {
             name: {type: 'string'},
-            classification: {type: 'string'}
-          }
-        }
-      }
+            classification: {type: 'string'},
+          },
+        },
+      },
     });
 
     // Create sources
@@ -58,7 +58,7 @@ module("Integration - Three Memory Source Sync (Blocking / Non-blocking)", {
     source1to2Connector = source2to1Connector = null;
     source1to3Connector = source3to1Connector = null;
     source1 = source2 = source3 = null;
-  }
+  },
 });
 
 test('Spontaneous information from sources', function() {
@@ -73,14 +73,14 @@ test('Spontaneous information from sources', function() {
   function discover(source, planetName) {
     // console.log('planet', planetName);
     var id = uuid();
-    var data = source.normalize("planet", {
+    var data = source.normalize('planet', {
       id: id,
-      name: planetName
+      name: planetName,
     });
     source.transform({
-      op: "add",
-      path: ["planet", id],
-      value: data
+      op: 'add',
+      path: ['planet', id],
+      value: data,
     });
 
     return source.settleTransforms();
@@ -102,33 +102,33 @@ test('Spontaneous information from sources', function() {
   var asyncDiscover = new Promise(function(resolve) {
     resolve();
   }).then(function() {
-    return discover(source2, "saturn");
+    return discover(source2, 'saturn');
   });
 
   Promise
     .all([
-      discover(source3, "earth"),
-      discover(source2, "mars"),
-      discover(source3, "mercury"),
-      discover(source2, "jupiter"),
-      asyncDiscover
+      discover(source3, 'earth'),
+      discover(source2, 'mars'),
+      discover(source3, 'mercury'),
+      discover(source2, 'jupiter'),
+      asyncDiscover,
     ])
     .then(function() {
       return source1.find('planet');
     })
     .then(function(planets) {
-      equal(planets.length, 5, "source1 - successfully added planets");
+      equal(planets.length, 5, 'source1 - successfully added planets');
       deepEqual(planets.map(function(p) { return p.name; }), ['earth', 'mars', 'mercury', 'jupiter', 'saturn'], 'planets are in the expected order');
 
       return source2.find('planet');
     })
     .then(function(planets) {
-      equal(planets.length, 5, "source2 - successfully added planets");
+      equal(planets.length, 5, 'source2 - successfully added planets');
 
       return source3.find('planet');
     })
     .then(function(planets) {
       start();
-      equal(planets.length, 5, "source3 - successfully added planets");
+      equal(planets.length, 5, 'source3 - successfully added planets');
     });
 });

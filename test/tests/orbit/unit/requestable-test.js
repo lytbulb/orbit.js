@@ -19,11 +19,11 @@ var testRequestableAction = function(actionName) {
     });
   };
 
-  test("it should require the definition of _" + actionName, function() {
-    throws(source[actionName], "presence of _" + actionName + " should be verified");
+  test('it should require the definition of _' + actionName, function() {
+    throws(source[actionName], 'presence of _' + actionName + ' should be verified');
   });
 
-  test("it should require that _" + actionName + " returns a promise", function() {
+  test('it should require that _' + actionName + ' returns a promise', function() {
     expect(2);
 
     source['_' + actionName] = successfulOperation;
@@ -36,7 +36,7 @@ var testRequestableAction = function(actionName) {
     });
   });
 
-  test("it should resolve as a failure when _" + actionName + " fails", function() {
+  test('it should resolve as a failure when _' + actionName + ' fails', function() {
     source['_' + actionName] = failedOperation;
 
     stop();
@@ -45,6 +45,7 @@ var testRequestableAction = function(actionName) {
         start();
         ok(false, '_' + actionName + ' should not be resolved successfully');
       },
+
       function(result) {
         start();
         ok(true, '_' + actionName + ' promise resolved as a failure');
@@ -53,7 +54,7 @@ var testRequestableAction = function(actionName) {
     );
   });
 
-  test("it should trigger `did" + ActionName + "` event after a successful action", function() {
+  test('it should trigger `did' + ActionName + '` event after a successful action', function() {
     expect(6);
 
     var order = 0;
@@ -77,7 +78,7 @@ var testRequestableAction = function(actionName) {
     });
   });
 
-  test("`did" + ActionName + "` event should receive results as the last argument, even if they are an array", function() {
+  test('`did' + ActionName + '` event should receive results as the last argument, even if they are an array', function() {
     expect(6);
 
     var order = 0;
@@ -103,7 +104,7 @@ var testRequestableAction = function(actionName) {
     });
   });
 
-  test("it should trigger `didNot" + ActionName + "` event after an unsuccessful action", function() {
+  test('it should trigger `didNot' + ActionName + '` event after an unsuccessful action', function() {
     expect(6);
 
     var order = 0;
@@ -131,7 +132,7 @@ var testRequestableAction = function(actionName) {
     });
   });
 
-  test("`didNot" + ActionName + "` event should receive errors as the last argument, even if they are an array", function() {
+  test('`didNot' + ActionName + '` event should receive errors as the last argument, even if they are an array', function() {
     expect(6);
 
     var order = 0;
@@ -161,7 +162,7 @@ var testRequestableAction = function(actionName) {
     });
   });
 
-  test("it should queue actions returned from `assist" + ActionName + "` and try them in order until one succeeds", function() {
+  test('it should queue actions returned from `assist' + ActionName + '` and try them in order until one succeeds', function() {
     expect(5);
 
     var order = 0;
@@ -196,7 +197,7 @@ var testRequestableAction = function(actionName) {
     });
   });
 
-  test("it should queue actions returned from `assist" + ActionName + "` and fail if they all fail", function() {
+  test('it should queue actions returned from `assist' + ActionName + '` and fail if they all fail', function() {
     expect(6);
 
     var order = 0;
@@ -230,6 +231,7 @@ var testRequestableAction = function(actionName) {
         start();
         ok(false, 'promise should not succeed');
       },
+
       function(result) {
         start();
         equal(++order, 5, 'promise failed because no actions succeeded');
@@ -238,7 +240,7 @@ var testRequestableAction = function(actionName) {
     );
   });
 
-  test("after an unsuccessful action, it should queue actions returned from `rescue" + ActionName + "` and try them in order until one succeeds", function() {
+  test('after an unsuccessful action, it should queue actions returned from `rescue' + ActionName + '` and try them in order until one succeeds', function() {
     expect(6);
 
     var order = 0;
@@ -274,7 +276,7 @@ var testRequestableAction = function(actionName) {
     });
   });
 
-  test("after an unsuccessful action, it should queue actions returned from `rescue" + ActionName + "` and fail if they all fail", function() {
+  test('after an unsuccessful action, it should queue actions returned from `rescue' + ActionName + '` and fail if they all fail', function() {
     expect(6);
 
     var order = 0;
@@ -308,6 +310,7 @@ var testRequestableAction = function(actionName) {
         start();
         ok(false, 'promise should not succeed');
       },
+
       function(result) {
         start();
         equal(++order, 5, 'promise failed because no actions succeeded');
@@ -323,7 +326,7 @@ var verifyActionExists = function(source, name) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-module("Orbit - Requestable", {
+module('Orbit - Requestable', {
   setup: function() {
     Orbit.Promise = Promise;
     source = {};
@@ -333,24 +336,24 @@ module("Orbit - Requestable", {
   teardown: function() {
     source = null;
     Orbit.Promise = null;
-  }
+  },
 });
 
-test("it exists", function() {
+test('it exists', function() {
   ok(source);
 });
 
-test("it should mixin Evented", function() {
+test('it should mixin Evented', function() {
   ['on', 'off', 'emit', 'poll'].forEach(function(prop) {
     ok(source[prop], 'should have Evented properties');
   });
 });
 
-test("it defines `find` as an action by default", function() {
+test('it defines `find` as an action by default', function() {
   verifyActionExists(source, 'find');
 });
 
-test("#extend - can define any number of custom actions", function() {
+test('#extend - can define any number of custom actions', function() {
   var requestable = {},
       customActions = ['find', 'add', 'update', 'remove'];
 
@@ -361,7 +364,7 @@ test("#extend - can define any number of custom actions", function() {
   });
 });
 
-test("#defineAction - can define one or more custom actions", function() {
+test('#defineAction - can define one or more custom actions', function() {
   var customActions = ['link', 'unlink'];
   Requestable.defineAction(source, customActions);
 

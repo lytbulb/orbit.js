@@ -13,27 +13,27 @@ var failedOperation = function() {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-module("Orbit - ActionQueue", {
+module('Orbit - ActionQueue', {
   setup: function() {
     Orbit.Promise = Promise;
   },
 
   teardown: function() {
     Orbit.Promise = null;
-  }
+  },
 });
 
-test("it exists", function() {
+test('it exists', function() {
   var queue = new ActionQueue(noop);
   ok(queue);
 });
 
-test("it is set to `autoProcess` by default", function() {
+test('it is set to `autoProcess` by default', function() {
   var queue = new ActionQueue(noop);
   equal(queue.autoProcess, true, 'autoProcess === true');
 });
 
-test("will auto-process pushed actions sequentially by default", function() {
+test('will auto-process pushed actions sequentially by default', function() {
   expect(5);
   stop();
 
@@ -70,7 +70,8 @@ test("will auto-process pushed actions sequentially by default", function() {
     process: function() {
       _transform.call(this, this.data);
     },
-    data: op1
+
+    data: op1,
   });
 
   queue.push({
@@ -78,11 +79,12 @@ test("will auto-process pushed actions sequentially by default", function() {
     process: function() {
       _transform.call(this, this.data);
     },
-    data: op2
+
+    data: op2,
   });
 });
 
-test("with `autoProcess` disabled, will process pushed functions sequentially when `process` is called", function() {
+test('with `autoProcess` disabled, will process pushed functions sequentially when `process` is called', function() {
   expect(5);
   stop();
 
@@ -119,7 +121,8 @@ test("with `autoProcess` disabled, will process pushed functions sequentially wh
     process: function() {
       _transform.call(this, this.data);
     },
-    data: op1
+
+    data: op1,
   });
 
   queue.push({
@@ -127,13 +130,14 @@ test("with `autoProcess` disabled, will process pushed functions sequentially wh
     process: function() {
       _transform.call(this, this.data);
     },
-    data: op2
+
+    data: op2,
   });
 
   queue.process();
 });
 
-test("will auto-process pushed async functions sequentially by default", function() {
+test('will auto-process pushed async functions sequentially by default', function() {
   expect(8);
   stop();
 
@@ -177,6 +181,7 @@ test("will auto-process pushed async functions sequentially by default", functio
         resolve();
       });
     }
+
     return promise;
   };
 
@@ -185,7 +190,8 @@ test("will auto-process pushed async functions sequentially by default", functio
     process: function() {
       _transform.call(this, this.data);
     },
-    data: op1
+
+    data: op1,
   });
 
   queue.push({
@@ -193,7 +199,8 @@ test("will auto-process pushed async functions sequentially by default", functio
     process: function() {
       _transform.call(this, this.data);
     },
-    data: op2
+
+    data: op2,
   });
 
   queue.process().then(function() {
@@ -204,7 +211,7 @@ test("will auto-process pushed async functions sequentially by default", functio
   trigger.emit('start1');
 });
 
-test("will stop processing when an action errors", function() {
+test('will stop processing when an action errors', function() {
   expect(8);
   stop();
 
@@ -251,7 +258,8 @@ test("will stop processing when an action errors", function() {
     process: function() {
       _transform.call(this, this.data);
     },
-    data: op1
+
+    data: op1,
   });
 
   queue.push({
@@ -259,12 +267,14 @@ test("will stop processing when an action errors", function() {
     process: function() {
       throw new Error(':(');
     },
-    data: op2
+
+    data: op2,
   });
 
   queue.process().then(function() {
     ok(false, 'process should not resolve successfully');
   }, function(err) {
+
     start();
     equal(err.message, ':(', 'process rejection - error matches expectation');
   });

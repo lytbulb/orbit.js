@@ -10,14 +10,14 @@ var source;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-module("OC - LocalStorageSource", {
+module('OC - LocalStorageSource', {
   setup: function() {
     Orbit.Promise = Promise;
 
     var schema = new Schema({
       models: {
-        planet: {}
-      }
+        planet: {},
+      },
     });
 
     source = new LocalStorageSource({schema: schema, autoload: false});
@@ -27,19 +27,19 @@ module("OC - LocalStorageSource", {
     window.localStorage.removeItem(source.namespace);
     source = null;
     Orbit.Promise = null;
-  }
+  },
 });
 
-test("it exists", function() {
+test('it exists', function() {
   ok(source);
 });
 
-test("its prototype chain is correct", function() {
+test('its prototype chain is correct', function() {
   ok(source instanceof Source,       'instanceof Source');
   ok(source instanceof MemorySource, 'instanceof MemorySource');
 });
 
-test("#add - can insert records and assign ids", function() {
+test('#add - can insert records and assign ids', function() {
   expect(7);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -62,7 +62,7 @@ test("#add - can insert records and assign ids", function() {
     });
 });
 
-test("#replaceRecord - can replace whole records", function() {
+test('#replaceRecord - can replace whole records', function() {
   expect(8);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -93,7 +93,7 @@ test("#replaceRecord - can replace whole records", function() {
     });
 });
 
-test("#replaceAttribute - can update attributes", function() {
+test('#replaceAttribute - can update attributes', function() {
   expect(6);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -119,7 +119,7 @@ test("#replaceAttribute - can update attributes", function() {
     });
 });
 
-test("#removeRecord - can delete records", function() {
+test('#removeRecord - can delete records', function() {
   expect(3);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -136,7 +136,7 @@ test("#removeRecord - can delete records", function() {
     });
 });
 
-test("#find - can find all records", function() {
+test('#find - can find all records', function() {
   expect(3);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -145,7 +145,7 @@ test("#find - can find all records", function() {
   all([
     source.addRecord({type: 'planet', attributes: {name: 'Jupiter', classification: 'gas giant', atmosphere: true}}),
     source.addRecord({type: 'planet', attributes: {name: 'Earth', classification: 'terrestrial', atmosphere: true}}),
-    source.addRecord({type: 'planet', attributes: {name: 'Mercury', classification: 'terrestrial', atmosphere: false}})
+    source.addRecord({type: 'planet', attributes: {name: 'Mercury', classification: 'terrestrial', atmosphere: false}}),
   ]).then(function() {
     equal(source.length('planet'), 3, 'source should contain 3 records');
     source.find('planet').then(function(allPlanets) {
@@ -156,7 +156,7 @@ test("#find - can find all records", function() {
   });
 });
 
-test("it can use a custom local storage namespace for storing data", function() {
+test('it can use a custom local storage namespace for storing data', function() {
   expect(1);
 
   source.namespace = 'planets';
@@ -169,7 +169,7 @@ test("it can use a custom local storage namespace for storing data", function() 
     });
 });
 
-test("autosave can be disabled to delay writing to local storage", function() {
+test('autosave can be disabled to delay writing to local storage', function() {
   expect(4);
 
   source.disableAutosave();

@@ -25,7 +25,7 @@ var source1,
     source1to3Connector,
     source3to1Connector;
 
-module("Integration - Three Memory Source Sync (Blocking)", {
+module('Integration - Three Memory Source Sync (Blocking)', {
   setup: function() {
     Orbit.Promise = Promise;
 
@@ -34,17 +34,17 @@ module("Integration - Three Memory Source Sync (Blocking)", {
       modelDefaults: {
         keys: {
           '__id': {primaryKey: true, defaultValue: uuid},
-          'id': {}
-        }
+          'id': {},
+        },
       },
       models: {
         planet: {
           attributes: {
             name: {type: 'string'},
-            classification: {type: 'string'}
-          }
-        }
-      }
+            classification: {type: 'string'},
+          },
+        },
+      },
     });
 
     // Create sources
@@ -66,10 +66,10 @@ module("Integration - Three Memory Source Sync (Blocking)", {
   teardown: function() {
     source1to2Connector = source2to1Connector = null;
     source1 = source2 = null;
-  }
+  },
 });
 
-test("consecutive transforms can be applied to one source and should be automatically applied to the other source", function() {
+test('consecutive transforms can be applied to one source and should be automatically applied to the other source', function() {
   expect(4);
 
   stop();
@@ -77,13 +77,13 @@ test("consecutive transforms can be applied to one source and should be automati
   source1.transform({
     op: 'add',
     path: ['planet', '123'],
-    value: source1.normalize('planet', {name: 'Jupiter'})
+    value: source1.normalize('planet', {name: 'Jupiter'}),
   });
 
   source1.transform({
     op: 'replace',
     path: ['planet', '123', 'name'],
-    value: 'Earth'
+    value: 'Earth',
 
   }).then(function() {
     source1.find('planet', '123').then(function(planet1) {
@@ -98,7 +98,7 @@ test("consecutive transforms can be applied to one source and should be automati
   });
 });
 
-test("an array of transforms can be applied to one source and should be automatically applied to the other source", function() {
+test('an array of transforms can be applied to one source and should be automatically applied to the other source', function() {
   expect(4);
 
   stop();
@@ -106,12 +106,12 @@ test("an array of transforms can be applied to one source and should be automati
   source1.transform([{
     op: 'add',
     path: ['planet', '123'],
-    value: source1.normalize('planet', {name: 'Jupiter'})
+    value: source1.normalize('planet', {name: 'Jupiter'}),
   }, {
     op: 'replace',
     path: ['planet', '123', 'name'],
-    value: 'Earth'
-  }]).then(function() {
+    value: 'Earth',
+  },]).then(function() {
     source1.find('planet', '123').then(function(planet1) {
       source2.find('planet', '123').then(function(planet2) {
         start();
@@ -124,7 +124,7 @@ test("an array of transforms can be applied to one source and should be automati
   });
 });
 
-test("replacing value with null should not cause infinite update loop", function() {
+test('replacing value with null should not cause infinite update loop', function() {
   expect(4);
 
   stop();
@@ -132,12 +132,12 @@ test("replacing value with null should not cause infinite update loop", function
   source1.transform({
     op: 'add',
     path: ['planet', '123'],
-    value: source1.normalize('planet', {name: 'Jupiter'})
+    value: source1.normalize('planet', {name: 'Jupiter'}),
   }).then(function() {
     source1.transform({
       op: 'replace',
       path: ['planet', '123', 'name'],
-      value: null
+      value: null,
     }).then(function() {
       source1.find('planet', '123').then(function(planet1) {
         source2.find('planet', '123').then(function(planet2) {

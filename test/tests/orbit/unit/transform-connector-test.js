@@ -13,7 +13,7 @@ var primarySource,
 
 ///////////////////////////////////////////////////////////////////////////////
 
-module("Orbit - TransformConnector", {
+module('Orbit - TransformConnector', {
   setup: function() {
     Orbit.Promise = Promise;
 
@@ -30,27 +30,27 @@ module("Orbit - TransformConnector", {
     transformConnector = null;
 
     Orbit.Promise = null;
-  }
+  },
 });
 
-test("it exists", function() {
+test('it exists', function() {
   transformConnector = new TransformConnector(primarySource, secondarySource);
   ok(transformConnector);
 });
 
-test("it is active by default exists", function() {
+test('it is active by default exists', function() {
   transformConnector = new TransformConnector(primarySource, secondarySource);
   equal(transformConnector.isActive(), true);
 });
 
-test("it watches `didTransform` events on the source and applies them to the target", function() {
+test('it watches `didTransform` events on the source and applies them to the target', function() {
   expect(1);
 
   var appliedOps = [{
     op: 'add',
     path: ['planet', '1'],
-    value: {id: 1, name: 'Earth'}
-  }];
+    value: {id: 1, name: 'Earth'},
+  },];
 
   secondarySource._transform = function(ops) {
     start();
@@ -63,7 +63,6 @@ test("it watches `didTransform` events on the source and applies them to the tar
   stop();
   primarySource.transformed(new TransformResult(appliedOps));
 });
-
 
 /*
  TODO - tests needed

@@ -13,7 +13,7 @@ var schema, source;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-module("OC - MemorySource", {
+module('OC - MemorySource', {
   setup: function() {
     Orbit.Promise = Promise;
 
@@ -22,21 +22,21 @@ module("OC - MemorySource", {
         planet: {
           attributes: {
             name: {type: 'string'},
-            classification: {type: 'string'}
+            classification: {type: 'string'},
           },
           relationships: {
-            moons: {type: 'hasMany', model: 'moon', inverse: 'planet'}
-          }
+            moons: {type: 'hasMany', model: 'moon', inverse: 'planet'},
+          },
         },
         moon: {
           attributes: {
-            name: {type: 'string'}
+            name: {type: 'string'},
           },
           relationships: {
-            planet: {type: 'hasOne', model: 'planet', inverse: 'moons'}
-          }
-        }
-      }
+            planet: {type: 'hasOne', model: 'planet', inverse: 'moons'},
+          },
+        },
+      },
     });
 
     source = new MemorySource({schema: schema});
@@ -46,18 +46,18 @@ module("OC - MemorySource", {
     schema = null;
     source = null;
     Orbit.Promise = null;
-  }
+  },
 });
 
-test("it exists", function() {
+test('it exists', function() {
   ok(source);
 });
 
-test("its prototype chain is correct", function() {
+test('its prototype chain is correct', function() {
   ok(source instanceof Source, 'instanceof Source');
 });
 
-test("#find - can find a record by id", function() {
+test('#find - can find a record by id', function() {
   expect(2);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -71,7 +71,7 @@ test("#find - can find a record by id", function() {
   });
 });
 
-test("#find - returns RecordNotFoundException when a record can't be found by id", function() {
+test('#find - returns RecordNotFoundException when a record can\'t be found by id', function() {
   expect(2);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -81,13 +81,14 @@ test("#find - returns RecordNotFoundException when a record can't be found by id
     source.find('planet', 'bogus').then(function(foundPlanet) {
       ok(false, 'no planet should be found');
     }, function(e) {
+
       start();
       ok(e instanceof RecordNotFoundException, 'RecordNotFoundException thrown');
     });
   });
 });
 
-test("#find - can find all records", function() {
+test('#find - can find all records', function() {
   expect(3);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -96,7 +97,7 @@ test("#find - can find all records", function() {
   all([
     source.addRecord({type: 'planet', attributes: {name: 'Jupiter', classification: 'gas giant', atmosphere: true}}),
     source.addRecord({type: 'planet', attributes: {name: 'Earth', classification: 'terrestrial', atmosphere: true}}),
-    source.addRecord({type: 'planet', attributes: {name: 'Mercury', classification: 'terrestrial', atmosphere: false}})
+    source.addRecord({type: 'planet', attributes: {name: 'Mercury', classification: 'terrestrial', atmosphere: false}}),
   ]).then(function() {
     equal(source.length('planet'), 3, 'source should contain 3 records');
     source.find('planet').then(function(allPlanets) {
@@ -107,7 +108,7 @@ test("#find - can find all records", function() {
   });
 });
 
-test("#find - returns RecordNotFoundException when no records of a type have been added (using a default sparse cache)", function() {
+test('#find - returns RecordNotFoundException when no records of a type have been added (using a default sparse cache)', function() {
   expect(2);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -116,12 +117,13 @@ test("#find - returns RecordNotFoundException when no records of a type have bee
   source.find('planet').then(function() {
     ok(false, 'no planet should be found');
   }, function(e) {
+
     start();
     ok(e instanceof RecordNotFoundException, 'RecordNotFoundException thrown');
   });
 });
 
-test("#find - returns an empty array of records when none have been added (using a non-sparse cache)", function() {
+test('#find - returns an empty array of records when none have been added (using a non-sparse cache)', function() {
   expect(2);
 
   source = new MemorySource({schema: schema, cacheOptions: {sparse: false}});
@@ -133,11 +135,12 @@ test("#find - returns an empty array of records when none have been added (using
     start();
     equal(planets.length, 0, 'an empty array of planets should be found');
   }, function(e) {
+
     ok(false, 'RecordNotFoundException should not be thrown');
   });
 });
 
-test("#query - can find records by one or more filters", function() {
+test('#query - can find records by one or more filters', function() {
   expect(5);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -147,7 +150,7 @@ test("#query - can find records by one or more filters", function() {
     source.addRecord({type: 'planet', attributes: {name: 'Jupiter', classification: 'gas giant', atmosphere: true}}),
     source.addRecord({type: 'planet', attributes: {name: 'Earth', classification: 'terrestrial', atmosphere: true}}),
     source.addRecord({type: 'planet', attributes: {name: 'Venus', classification: 'terrestrial', atmosphere: true}}),
-    source.addRecord({type: 'planet', attributes: {name: 'Mercury', classification: 'terrestrial', atmosphere: false}})
+    source.addRecord({type: 'planet', attributes: {name: 'Mercury', classification: 'terrestrial', atmosphere: false}}),
   ]).then(function() {
     equal(source.length('planet'), 4, 'source should contain 4 records');
 
@@ -161,7 +164,7 @@ test("#query - can find records by one or more filters", function() {
   });
 });
 
-test("#addRecord - creates a record", function() {
+test('#addRecord - creates a record', function() {
   expect(6);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -186,7 +189,7 @@ test("#addRecord - creates a record", function() {
   });
 });
 
-test("#addRecord - creates a record - data defaults to empty object", function() {
+test('#addRecord - creates a record - data defaults to empty object', function() {
   expect(3);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -200,7 +203,7 @@ test("#addRecord - creates a record - data defaults to empty object", function()
   });
 });
 
-test("#addRecord / #removeRecord - can create and remove has-one links and their inverse links", function() {
+test('#addRecord / #removeRecord - can create and remove has-one links and their inverse links', function() {
   expect(10);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -224,6 +227,7 @@ test("#addRecord / #removeRecord - can create and remove has-one links and their
     })
     .then(function(planet) {
       earth = planet;
+
       // Change the "inverse" link on the moon by linking it to our new planet
       return source.addToRelationship(earth, 'moons', io);
     })
@@ -249,7 +253,7 @@ test("#addRecord / #removeRecord - can create and remove has-one links and their
     });
 });
 
-test("#addRecord / #removeRecord - can create and remove has-many links and their inverse links", function() {
+test('#addRecord / #removeRecord - can create and remove has-many links and their inverse links', function() {
   expect(6);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -283,7 +287,7 @@ test("#addRecord / #removeRecord - can create and remove has-many links and thei
     });
 });
 
-test("#transform - remove operation for missing link path should leave a working source", function() {
+test('#transform - remove operation for missing link path should leave a working source', function() {
   expect(3);
   equal(source.length('planet'), 0, 'source should be empty');
   equal(source.length('moon'), 0, 'source should be empty');
@@ -291,14 +295,14 @@ test("#transform - remove operation for missing link path should leave a working
   stop();
   source.transform({
     op: 'remove',
-    path: ['moon', 'not-there', 'relationships', 'planet', 'data']
+    path: ['moon', 'not-there', 'relationships', 'planet', 'data'],
   }).then(function() {
     ok(true, 'transforms continue on');
     start();
   });
 });
 
-test("#replaceRecord - can replace whole records", function() {
+test('#replaceRecord - can replace whole records', function() {
   expect(7);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -327,7 +331,7 @@ test("#replaceRecord - can replace whole records", function() {
     });
 });
 
-test("#replaceAttribute - can update attributes", function() {
+test('#replaceAttribute - can update attributes', function() {
   expect(5);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -352,7 +356,7 @@ test("#replaceAttribute - can update attributes", function() {
     });
 });
 
-test("#removeRecord - can delete records", function() {
+test('#removeRecord - can delete records', function() {
   expect(3);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -369,7 +373,7 @@ test("#removeRecord - can delete records", function() {
     });
 });
 
-test("#addToRelationship and #removeFromRelationship - can link and unlink records in a many-to-one relationship via the 'many' side", function() {
+test('#addToRelationship and #removeFromRelationship - can link and unlink records in a many-to-one relationship via the \'many\' side', function() {
   expect(6);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -400,7 +404,7 @@ test("#addToRelationship and #removeFromRelationship - can link and unlink recor
     });
 });
 
-test("#addToRelationship and #removeFromRelationship - can link and unlink records in a many-to-one relationship via the 'one' side", function() {
+test('#addToRelationship and #removeFromRelationship - can link and unlink records in a many-to-one relationship via the \'one\' side', function() {
   expect(6);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -431,7 +435,7 @@ test("#addToRelationship and #removeFromRelationship - can link and unlink recor
     });
 });
 
-test("#addToRelationship - replacing hasOne relationship removes record from previous hasMany relationship", function(){
+test('#addToRelationship - replacing hasOne relationship removes record from previous hasMany relationship', function() {
   expect(2);
   stop();
 
@@ -440,7 +444,7 @@ test("#addToRelationship - replacing hasOne relationship removes record from pre
   all([
     source.addRecord({type: 'planet', attributes: {name: 'Jupiter', classification: 'gas giant', atmosphere: true}}),
     source.addRecord({type: 'planet', attributes: {name: 'Saturn', classification: 'gas giant', atmosphere: true}}),
-    source.addRecord({type: 'moon', attributes: {name: 'Io'}})
+    source.addRecord({type: 'moon', attributes: {name: 'Io'}}),
   ])
     .then(spread(function(a, b, c) {
       jupiter = a;
@@ -492,7 +496,7 @@ test("#addToRelationship - replacing hasOne relationship removes record from pre
 //     });
 // });
 
-test("#replaceRelationship - can link and unlink records in a many-to-one relationship via the 'many' side when it `actsAsSet`", function() {
+test('#replaceRelationship - can link and unlink records in a many-to-one relationship via the \'many\' side when it `actsAsSet`', function() {
   expect(6);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -511,7 +515,7 @@ test("#replaceRelationship - can link and unlink records in a many-to-one relati
     })
     .then(function(moon) {
       io = moon;
-      return source.replaceRelationship(jupiter, 'moons', [ io ]);
+      return source.replaceRelationship(jupiter, 'moons', [io]);
     })
     .then(function() {
       equal(Object.keys(jupiter.relationships.moons.data).length, 1, 'Jupiter has one moon after linking');
@@ -528,7 +532,7 @@ test("#replaceRelationship - can link and unlink records in a many-to-one relati
     });
 });
 
-test("#replaceRelationship - can link and unlink records in a many-to-one relationship via the 'one' side", function() {
+test('#replaceRelationship - can link and unlink records in a many-to-one relationship via the \'one\' side', function() {
   expect(4);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -554,7 +558,7 @@ test("#replaceRelationship - can link and unlink records in a many-to-one relati
     });
 });
 
-test("#findRelationship - can find has-one linked ids", function() {
+test('#findRelationship - can find has-one linked ids', function() {
   expect(4);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -583,7 +587,7 @@ test("#findRelationship - can find has-one linked ids", function() {
     });
 });
 
-test("#findRelated - can find has-one linked records", function() {
+test('#findRelated - can find has-one linked records', function() {
   expect(4);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -612,7 +616,7 @@ test("#findRelated - can find has-one linked records", function() {
     });
 });
 
-test("#findRelated - can find null for an empty has-one relationship", function() {
+test('#findRelated - can find null for an empty has-one relationship', function() {
   expect(4);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -640,7 +644,7 @@ test("#findRelated - can find null for an empty has-one relationship", function(
     });
 });
 
-test("#findRelationship - can find has-many linked values", function() {
+test('#findRelationship - can find has-many linked values', function() {
   expect(5);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -671,7 +675,7 @@ test("#findRelationship - can find has-many linked values", function() {
     });
 });
 
-test("#findRelated - can find has-many linked values", function() {
+test('#findRelated - can find has-many linked values', function() {
   expect(5);
 
   equal(source.length('planet'), 0, 'source should be empty');
@@ -701,7 +705,7 @@ test("#findRelated - can find has-many linked values", function() {
     });
 });
 
-test("#findRelated - can find an empty set of has-many linked values", function() {
+test('#findRelated - can find an empty set of has-many linked values', function() {
   expect(4);
 
   equal(source.length('planet'), 0, 'source should be empty');

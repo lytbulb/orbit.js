@@ -10,32 +10,32 @@ const schemaDefinition = {
     planet: {
       attributes: {
         name: {type: 'string'},
-        classification: {type: 'string'}
+        classification: {type: 'string'},
       },
       relationships: {
-        moons: {type: 'hasMany', model: 'moon', inverse: 'planet'}
-      }
+        moons: {type: 'hasMany', model: 'moon', inverse: 'planet'},
+      },
     },
     moon: {
       attributes: {
-        name: {type: 'string'}
+        name: {type: 'string'},
       },
       relationships: {
         planet: {type: 'hasOne', model: 'planet', inverse: 'moons'},
-        mountains: {type: 'hasMany', model: 'mountain', inverse: 'moon'}
-      }
+        mountains: {type: 'hasMany', model: 'mountain', inverse: 'moon'},
+      },
     },
     friend: {
       relationships: {
-        group: { model: 'group', type: 'hasOne', inverse: 'members' }
-      }
+        group: { model: 'group', type: 'hasOne', inverse: 'members' },
+      },
     },
     group: {
       relationships: {
-        members: { model: 'friend', type: 'hasMany', inverse: 'group' }
-      }
-    }
-  }
+        members: { model: 'friend', type: 'hasMany', inverse: 'group' },
+      },
+    },
+  },
 };
 
 var schema,
@@ -44,7 +44,7 @@ var schema,
     storeToSourceConnector,
     sourceToStoreConnector;
 
-module("Integration - Memory Source Sync (Blocking)", {
+module('Integration - Memory Source Sync (Blocking)', {
   setup: function() {
     Orbit.Promise = Promise;
 
@@ -70,10 +70,10 @@ module("Integration - Memory Source Sync (Blocking)", {
     sourceToStoreConnector = null;
     store = null;
     source = null;
-  }
+  },
 });
 
-test("consecutive transforms can be applied to one source and should be automatically applied to the other source", function({async}) {
+test('consecutive transforms can be applied to one source and should be automatically applied to the other source', function({async}) {
   const done = async();
   expect(4);
 
@@ -94,7 +94,7 @@ test("consecutive transforms can be applied to one source and should be automati
     });
 });
 
-test("replacing value with null should not cause infinite update loop", function({async}) {
+test('replacing value with null should not cause infinite update loop', function({async}) {
   const done = async();
   expect(4);
 
@@ -115,7 +115,7 @@ test("replacing value with null should not cause infinite update loop", function
     });
 });
 
-test("replacing relationship should not cause infinite update loop", function({async}) {
+test('replacing relationship should not cause infinite update loop', function({async}) {
   const done = async();
   expect(12);
 
@@ -126,7 +126,7 @@ test("replacing relationship should not cause infinite update loop", function({a
   all([
     store.addRecord({type: 'friend', id: 'gnarf'}),
     store.addRecord({type: 'group', id: 'initial'}),
-    store.addRecord({type: 'group', id: 'new' })
+    store.addRecord({type: 'group', id: 'new' }),
   ])
   .spread(function(storeGnarf, storeInitialGroup, storeNewGroup) {
     const sourceGnarf = source.retrieve(['friend', 'gnarf']);

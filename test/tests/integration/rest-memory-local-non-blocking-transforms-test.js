@@ -17,7 +17,7 @@ var server,
     memToRestConnector,
     restToMemConnector;
 
-module("Integration - Rest / Memory / Local Transforms (Non-Blocking)", {
+module('Integration - Rest / Memory / Local Transforms (Non-Blocking)', {
   setup: function() {
     Orbit.Promise = Promise;
     Orbit.ajax = jQuery.ajax;
@@ -30,17 +30,17 @@ module("Integration - Rest / Memory / Local Transforms (Non-Blocking)", {
       modelDefaults: {
         keys: {
           '__id': {primaryKey: true, defaultValue: uuid},
-          'id': {}
-        }
+          'id': {},
+        },
       },
       models: {
         planet: {
           attributes: {
             name: {type: 'string'},
-            classification: {type: 'string'}
-          }
-        }
-      }
+            classification: {type: 'string'},
+          },
+        },
+      },
     });
 
     // Create sources
@@ -66,10 +66,10 @@ module("Integration - Rest / Memory / Local Transforms (Non-Blocking)", {
 
     // Restore xhr
     server.restore();
-  }
+  },
 });
 
-test("records inserted into memory should be posted with rest", function() {
+test('records inserted into memory should be posted with rest', function() {
   expect(20);
 
   var localSourceTransforms = 0,
@@ -142,7 +142,7 @@ test("records inserted into memory should be posted with rest", function() {
   });
 });
 
-test("records updated in memory should be updated with rest", function() {
+test('records updated in memory should be updated with rest', function() {
   expect(40);
 
   var memorySourceTransforms = 0,
@@ -213,7 +213,7 @@ test("records updated in memory should be updated with rest", function() {
       equal(operations[0].value.name, 'Earth',               'rest source - name');
       equal(operations[0].value.classification, 'gas giant', 'rest source - classification');
 
-    } else  {
+    } else {
       ok(false, 'rest source - too many transforms');
     }
   });
@@ -271,7 +271,7 @@ test("records updated in memory should be updated with rest", function() {
   });
 });
 
-test("records patched in memory should be patched with rest", function() {
+test('records patched in memory should be patched with rest', function() {
   expect(37);
 
   var memorySourceTransforms = 0,
@@ -340,7 +340,7 @@ test("records patched in memory should be patched with rest", function() {
       equal(operations[0].op, 'replace',  'rest source - name replaced');
       equal(operations[0].value, 'Earth', 'rest source - name - Earth');
 
-    } else  {
+    } else {
       ok(false, 'rest source - too many transforms');
     }
   });
@@ -395,7 +395,7 @@ test("records patched in memory should be patched with rest", function() {
   });
 });
 
-test("records deleted in memory should be deleted with rest", function() {
+test('records deleted in memory should be deleted with rest', function() {
   expect(24);
 
   var memorySourceTransforms = 0,
@@ -457,7 +457,7 @@ test("records deleted in memory should be deleted with rest", function() {
       equal(operations.length, 1,                'rest source - one operation');
       equal(operations[0].op, 'remove',          'rest source - removed');
 
-    } else  {
+    } else {
       ok(false, 'rest source - too many transforms');
     }
   });

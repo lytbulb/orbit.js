@@ -24,7 +24,7 @@ var server,
 
 ///////////////////////////////////////////////////////////////////////////////
 
-module("OC - JSONAPISource", {
+module('OC - JSONAPISource', {
   setup: function() {
     Orbit.Promise = Promise;
     Orbit.ajax = jQuery.ajax;
@@ -36,31 +36,31 @@ module("OC - JSONAPISource", {
     schema = new Schema({
       modelDefaults: {
         id: {
-          defaultValue: uuid
+          defaultValue: uuid,
         },
         keys: {
-          remoteId: {}
-        }
+          remoteId: {},
+        },
       },
       models: {
         planet: {
           attributes: {
             name: {type: 'string'},
-            classification: {type: 'string'}
+            classification: {type: 'string'},
           },
           relationships: {
-            moons: {type: 'hasMany', model: 'moon', inverse: 'planet'}
-          }
+            moons: {type: 'hasMany', model: 'moon', inverse: 'planet'},
+          },
         },
         moon: {
           attributes: {
-            name: {type: 'string'}
+            name: {type: 'string'},
           },
           relationships: {
-            planet: {type: 'hasOne', model: 'planet', inverse: 'moons'}
-          }
-        }
-      }
+            planet: {type: 'hasOne', model: 'planet', inverse: 'moons'},
+          },
+        },
+      },
     });
 
     source = new JSONAPISource({schema: schema});
@@ -73,30 +73,30 @@ module("OC - JSONAPISource", {
     source = null;
 
     server.restore();
-  }
+  },
 });
 
-test("it exists", function() {
+test('it exists', function() {
   ok(source);
 });
 
-test("its prototype chain is correct", function() {
+test('its prototype chain is correct', function() {
   ok(source instanceof Source, 'instanceof Source');
 });
 
-test("source saves options", function() {
+test('source saves options', function() {
   expect(6);
   var schema = new Schema({});
-  source = new JSONAPISource({schema: schema, host: "127.0.0.1:8888", namespace: "api", headers: {"User-Agent": "CERN-LineMode/2.15 libwww/2.17b3"}});
-  equal(source.namespace, "api", "Namespace should be defined");
-  equal(source.host, "127.0.0.1:8888", "Host should be defined");
-  equal(source.headers["User-Agent"], "CERN-LineMode/2.15 libwww/2.17b3", "Headers should be defined");
-  equal(source.resourceNamespace(), source.namespace, "Default namespace should be used by default");
-  equal(source.resourceHost(), source.host, "Default host should be used by default");
-  deepEqual(source.ajaxHeaders(), source.headers, "Default headers should be used by default");
+  source = new JSONAPISource({schema: schema, host: '127.0.0.1:8888', namespace: 'api', headers: {'User-Agent': 'CERN-LineMode/2.15 libwww/2.17b3'}});
+  equal(source.namespace, 'api', 'Namespace should be defined');
+  equal(source.host, '127.0.0.1:8888', 'Host should be defined');
+  equal(source.headers['User-Agent'], 'CERN-LineMode/2.15 libwww/2.17b3', 'Headers should be defined');
+  equal(source.resourceNamespace(), source.namespace, 'Default namespace should be used by default');
+  equal(source.resourceHost(), source.host, 'Default host should be used by default');
+  deepEqual(source.ajaxHeaders(), source.headers, 'Default headers should be used by default');
 });
 
-test("#resourcePath - returns resource's path without its host and namespace", function () {
+test('#resourcePath - returns resource\'s path without its host and namespace', function() {
   expect(1);
   source.host = 'http://127.0.0.1:8888';
   source.namespace = 'api';
@@ -105,7 +105,7 @@ test("#resourcePath - returns resource's path without its host and namespace", f
   equal(source.resourcePath('planet', '1'), 'planets/a', 'resourcePath returns the path to the resource relative to the host and namespace');
 });
 
-test("#resourceURL - respects options to construct URLs", function () {
+test('#resourceURL - respects options to construct URLs', function() {
   expect(1);
   source.host = 'http://127.0.0.1:8888';
   source.namespace = 'api';
@@ -114,14 +114,14 @@ test("#resourceURL - respects options to construct URLs", function () {
   equal(source.resourceURL('planet', '1'), 'http://127.0.0.1:8888/api/planets/a', 'resourceURL method should use the options to construct URLs');
 });
 
-test("#resourceRelationshipURL - constructs relationship URLs based upon base resourceURL", function () {
+test('#resourceRelationshipURL - constructs relationship URLs based upon base resourceURL', function() {
   expect(1);
   var jupiter = source.normalize({type: 'planet', id: '1', keys: {remoteId: 'a'}, attributes: {name: 'Jupiter'}});
 
-  equal(source.resourceRelationshipURL('planet', '1', 'moons'), '/planets/a/relationships/moons', "resourceRelationshipURL appends /relationships/[relationship] to resourceURL");
+  equal(source.resourceRelationshipURL('planet', '1', 'moons'), '/planets/a/relationships/moons', 'resourceRelationshipURL appends /relationships/[relationship] to resourceURL');
 });
 
-test("#transform - can add records", function() {
+test('#transform - can add records', function() {
   expect(4);
 
   server.respondWith('POST', '/planets', function(xhr) {
@@ -131,9 +131,9 @@ test("#transform - can add records", function() {
           type: 'planets',
           attributes: {
             name: 'Jupiter',
-            classification: 'gas giant'
-          }
-        }
+            classification: 'gas giant',
+          },
+        },
       },
       'POST request');
     xhr.respond(201,
@@ -151,16 +151,16 @@ test("#transform - can add records", function() {
     id: planet.id,
     attributes: {
       name: 'Jupiter',
-      classification: 'gas giant'
+      classification: 'gas giant',
     },
     keys: {
-      remoteId: undefined
+      remoteId: undefined,
     },
     relationships: {
       moons: {
-        data: undefined
-      }
-    }
+        data: undefined,
+      },
+    },
   });
 
   var addPlanetRemoteIdOp = toOperation('add', ['planet', planet.id, 'keys', 'remoteId'], '12345');
@@ -171,7 +171,7 @@ test("#transform - can add records", function() {
     if (transformCount === 1) {
       equalOps(
         transform.operations,
-        [ addPlanetOp ],
+        [addPlanetOp],
         'didTransform initially returns add-record op'
       );
 
@@ -180,7 +180,7 @@ test("#transform - can add records", function() {
       start();
       equalOps(
         transform.operations,
-        [ addPlanetRemoteIdOp ],
+        [addPlanetRemoteIdOp],
         'didTransform then returns add-remote-id op'
       );
     }
@@ -192,13 +192,13 @@ test("#transform - can add records", function() {
     .then(function(result) {
       equalOps(
         result.operations,
-        [ addPlanetOp, addPlanetRemoteIdOp ],
+        [addPlanetOp, addPlanetRemoteIdOp],
         'transform returns result containing both add-record and add-remote-id ops'
       );
     });
 });
 
-test("#transform - can update records", function() {
+test('#transform - can update records', function() {
   expect(5);
 
   var planet = schema.normalize({type: 'planet', keys: {remoteId: '12345'}, attributes: {name: 'Jupiter', classification: 'gas giant'}});
@@ -209,16 +209,16 @@ test("#transform - can update records", function() {
     id: planet.id,
     attributes: {
       name: 'Jupiter',
-      classification: 'gas giant'
+      classification: 'gas giant',
     },
     keys: {
-      remoteId: '12345'
+      remoteId: '12345',
     },
     relationships: {
       moons: {
-        data: undefined
-      }
-    }
+        data: undefined,
+      },
+    },
   });
 
   server.respondWith('PATCH', '/planets/12345', function(xhr) {
@@ -229,9 +229,9 @@ test("#transform - can update records", function() {
           id: '12345',
           attributes: {
             name: 'Jupiter',
-            classification: 'gas giant'
-          }
-        }
+            classification: 'gas giant',
+          },
+        },
       },
       'PATCH request');
     xhr.respond(200,
@@ -247,7 +247,7 @@ test("#transform - can update records", function() {
 
       equalOps(
         result.operations,
-        [ replacePlanetOp ],
+        [replacePlanetOp],
         'transform returns result containing replace-record op'
       );
 
@@ -258,7 +258,7 @@ test("#transform - can update records", function() {
     });
 });
 
-test("#transform - can replace attributes", function() {
+test('#transform - can replace attributes', function() {
   expect(2);
 
   var planet = schema.normalize({type: 'planet', keys: {remoteId: '12345'}, attributes: {name: 'Jupiter', classification: 'gas giant'}});
@@ -270,9 +270,9 @@ test("#transform - can replace attributes", function() {
           type: 'planets',
           id: '12345',
           attributes: {
-            classification: 'terrestrial'
-          }
-        }
+            classification: 'terrestrial',
+          },
+        },
       },
       'PATCH request');
     xhr.respond(200,
@@ -289,7 +289,7 @@ test("#transform - can replace attributes", function() {
     });
 });
 
-test("#transform - can delete records", function() {
+test('#transform - can delete records', function() {
   expect(2);
 
   var planet = schema.normalize({type: 'planet', keys: {remoteId: '12345'}});
@@ -309,7 +309,7 @@ test("#transform - can delete records", function() {
     });
 });
 
-test("#transform - can add a hasMany relationship with POST", function() {
+test('#transform - can add a hasMany relationship with POST', function() {
   expect(2);
 
   var planet = schema.normalize({type: 'planet', keys: {remoteId: '12345'}});
@@ -331,7 +331,7 @@ test("#transform - can add a hasMany relationship with POST", function() {
     });
 });
 
-test("#transform - can remove a relationship with DELETE", function() {
+test('#transform - can remove a relationship with DELETE', function() {
   expect(2);
 
   var planet = schema.normalize({type: 'planet', keys: {remoteId: '12345'}});
@@ -353,7 +353,7 @@ test("#transform - can remove a relationship with DELETE", function() {
     });
 });
 
-test("#transform - can update a hasOne relationship with PATCH", function() {
+test('#transform - can update a hasOne relationship with PATCH', function() {
   expect(2);
 
   var planet = schema.normalize({type: 'planet', keys: {remoteId: '12345'}});
@@ -375,7 +375,7 @@ test("#transform - can update a hasOne relationship with PATCH", function() {
     });
 });
 
-test("#transform - can clear a hasOne relationship with PATCH", function() {
+test('#transform - can clear a hasOne relationship with PATCH', function() {
   expect(2);
 
   var moon = schema.normalize({type: 'moon', keys: {remoteId: '987'}});
@@ -396,7 +396,7 @@ test("#transform - can clear a hasOne relationship with PATCH", function() {
     });
 });
 
-test("#transform - can replace a hasMany relationship (flagged as `actsAsSet`) with PATCH", function() {
+test('#transform - can replace a hasMany relationship (flagged as `actsAsSet`) with PATCH', function() {
   expect(2);
 
   var planet = schema.normalize({type: 'planet', keys: {remoteId: '12345'}});
@@ -423,7 +423,7 @@ test("#transform - can replace a hasMany relationship (flagged as `actsAsSet`) w
     });
 });
 
-test("#find - can find an individual record by passing in a single id", function() {
+test('#find - can find an individual record by passing in a single id', function() {
   expect(5);
 
   var planet = schema.normalize({type: 'planet', keys: {remoteId: '12345'}});
@@ -446,7 +446,7 @@ test("#find - can find an individual record by passing in a single id", function
     });
 });
 
-test("#find - can return a compound document including related records", function() {
+test('#find - can return a compound document including related records', function() {
   expect(7);
 
   var planet = schema.normalize({type: 'planet', keys: {remoteId: '12345'}});
@@ -457,22 +457,22 @@ test("#find - can return a compound document including related records", functio
       type: 'planets',
       attributes: {
         name: 'Jupiter',
-        classification: 'gas giant'
+        classification: 'gas giant',
       },
       relationships: {
-        moons: {data: [{type: 'moons', id: '5'}]}
-      }
+        moons: {data: [{type: 'moons', id: '5'}]},
+      },
     },
     included: [{
       id: '5',
       type: 'moons',
       attributes: {
-        name: 'Io'
+        name: 'Io',
       },
       relationships: {
-        planet: {data: {type: 'planets', id: '12345'}}
-      }
-    }]
+        planet: {data: {type: 'planets', id: '12345'}},
+      },
+    },],
   };
 
   server.respondWith('GET', '/planets/12345', function(xhr) {
@@ -501,13 +501,13 @@ test("#find - can return a compound document including related records", functio
     });
 });
 
-test("#find - can find all records", function() {
+test('#find - can find all records', function() {
   expect(13);
 
   var records = [
     {type: 'planets', id: '1', attributes: {name: 'Jupiter', classification: 'gas giant'}},
     {type: 'planets', id: '2', attributes: {name: 'Earth', classification: 'terrestrial'}},
-    {type: 'planets', id: '3', attributes: {name: 'Saturn', classification: 'gas giant'}}
+    {type: 'planets', id: '3', attributes: {name: 'Saturn', classification: 'gas giant'}},
   ];
 
   server.respondWith('GET', '/planets', function(xhr) {

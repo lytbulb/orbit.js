@@ -11,7 +11,7 @@ var schema,
 
 ///////////////////////////////////////////////////////////////////////////////
 
-module("OC - JSONAPISerializer", {
+module('OC - JSONAPISerializer', {
   setup: function() {
     Orbit.Promise = Promise;
   },
@@ -19,37 +19,37 @@ module("OC - JSONAPISerializer", {
   teardown: function() {
     schema = null;
     serializer = null;
-  }
+  },
 });
 
 var modelsInSchema = {
   planet: {
     attributes: {
       name: {type: 'string'},
-      classification: {type: 'string'}
+      classification: {type: 'string'},
     },
     relationships: {
-      moons: {type: 'hasMany', model: 'moon', inverse: 'planet'}
-    }
+      moons: {type: 'hasMany', model: 'moon', inverse: 'planet'},
+    },
   },
   moon: {
     attributes: {
-      name: {type: 'string'}
+      name: {type: 'string'},
     },
     relationships: {
-      planet: {type: 'hasOne', model: 'planet', inverse: 'moons'}
-    }
-  }
+      planet: {type: 'hasOne', model: 'planet', inverse: 'moons'},
+    },
+  },
 };
 
 function setupWithLocalIds() {
   schema = new Schema({
     modelDefaults: {
       keys: {
-        'remoteId': {}
-      }
+        'remoteId': {},
+      },
     },
-    models: modelsInSchema
+    models: modelsInSchema,
   });
   serializer = new JSONAPISerializer(schema);
   serializer.resourceKey = function() { return 'remoteId'; };
@@ -57,66 +57,66 @@ function setupWithLocalIds() {
 
 function setupWithUUIDs() {
   schema = new Schema({
-    models: modelsInSchema
+    models: modelsInSchema,
   });
   serializer = new JSONAPISerializer(schema);
 }
 
-test("it exists", function() {
+test('it exists', function() {
   setupWithLocalIds();
 
   ok(serializer);
 });
 
-test("its prototype chain is correct", function() {
+test('its prototype chain is correct', function() {
   setupWithLocalIds();
 
   ok(serializer instanceof Serializer, 'instanceof Serializer');
 });
 
-test("#resourceKey returns 'id' by default", function() {
+test('#resourceKey returns \'id\' by default', function() {
   setupWithUUIDs();
 
   equal(serializer.resourceKey('planet'), 'id');
 });
 
-test("#resourceType returns the pluralized, dasherized type by default", function() {
+test('#resourceType returns the pluralized, dasherized type by default', function() {
   setupWithLocalIds();
 
   equal(serializer.resourceType('planetaryObject'), 'planetary-objects');
 });
 
-test("#resourceRelationship returns the dasherized relationship by default", function() {
+test('#resourceRelationship returns the dasherized relationship by default', function() {
   setupWithLocalIds();
 
   equal(serializer.resourceRelationship('planet', 'surfaceElements'), 'surface-elements');
 });
 
-test("#resourceAttr returns the dasherized attribute by default", function() {
+test('#resourceAttr returns the dasherized attribute by default', function() {
   setupWithLocalIds();
 
   equal(serializer.resourceRelationship('planet', 'fullName'), 'full-name');
 });
 
-test("#typeFromResourceType returns the singularized, camelized type by default", function() {
+test('#typeFromResourceType returns the singularized, camelized type by default', function() {
   setupWithLocalIds();
 
   equal(serializer.typeFromResourceType('planetary-objects'), 'planetaryObject');
 });
 
-test("#attrFromResourceAttr returns the camelized attribute by default", function() {
+test('#attrFromResourceAttr returns the camelized attribute by default', function() {
   setupWithLocalIds();
 
   equal(serializer.attrFromResourceAttr('planet', 'full-name'), 'fullName');
 });
 
-test("#relationshipFromResourceRelationship returns the camelized relationship by default", function() {
+test('#relationshipFromResourceRelationship returns the camelized relationship by default', function() {
   setupWithLocalIds();
 
   equal(serializer.relationshipFromResourceRelationship('planet', 'surface-elements'), 'surfaceElements');
 });
 
-test("#resourceId returns a matching resource id given an orbit id (or array of ids) - using local IDs", function() {
+test('#resourceId returns a matching resource id given an orbit id (or array of ids) - using local IDs', function() {
   setupWithLocalIds();
 
   schema.normalize({type: 'planet', id: '1', keys: {remoteId: 'a'}});
@@ -125,10 +125,10 @@ test("#resourceId returns a matching resource id given an orbit id (or array of 
   equal(serializer.resourceId('planet', '1'), 'a');
   equal(serializer.resourceId('planet', '2'), 'b');
 
-  deepEqual(serializer.resourceId('planet', ['1', '2']), ['a', 'b'], "works for arrays too");
+  deepEqual(serializer.resourceId('planet', ['1', '2']), ['a', 'b'], 'works for arrays too');
 });
 
-test("#resourceId returns a matching resource id given an orbit id (or array of ids) - using UUIDs", function() {
+test('#resourceId returns a matching resource id given an orbit id (or array of ids) - using UUIDs', function() {
   setupWithUUIDs();
 
   schema.normalize({type: 'planet', id: 'a'});
@@ -137,10 +137,10 @@ test("#resourceId returns a matching resource id given an orbit id (or array of 
   equal(serializer.resourceId('planet', 'a'), 'a');
   equal(serializer.resourceId('planet', 'b'), 'b');
 
-  deepEqual(serializer.resourceId('planet', ['a', 'b']), ['a', 'b'], "works for arrays too");
+  deepEqual(serializer.resourceId('planet', ['a', 'b']), ['a', 'b'], 'works for arrays too');
 });
 
-test("#idFromResourceId returns a matching orbit id given a resource id - using local IDs", function() {
+test('#idFromResourceId returns a matching orbit id given a resource id - using local IDs', function() {
   setupWithLocalIds();
 
   schema.normalize({type: 'planet', id: '1', keys:{remoteId: 'a'}});
@@ -150,7 +150,7 @@ test("#idFromResourceId returns a matching orbit id given a resource id - using 
   equal(serializer.idFromResourceId('planet', 'b'), '2');
 });
 
-test("#idFromResourceId returns a matching orbit id given a resource id - using UUIDs", function() {
+test('#idFromResourceId returns a matching orbit id given a resource id - using UUIDs', function() {
   setupWithUUIDs();
 
   schema.normalize({type: 'planet', id: 'a'});
@@ -160,27 +160,27 @@ test("#idFromResourceId returns a matching orbit id given a resource id - using 
   equal(serializer.idFromResourceId('planet', 'b'), 'b');
 });
 
-test("#serialize - can serialize a simple resource with only type and id", function() {
+test('#serialize - can serialize a simple resource with only type and id', function() {
   setupWithUUIDs();
 
   deepEqual(
     serializer.serialize(
       {
         type: 'planet',
-        id: '123'
+        id: '123',
       }
     ),
     {
       data: {
         type: 'planets',
-        id: '123'
-      }
+        id: '123',
+      },
     },
     'serialized document matches'
   );
 });
 
-test("#serialize - can serialize a simple resource with only attributes", function() {
+test('#serialize - can serialize a simple resource with only attributes', function() {
   setupWithLocalIds();
 
   deepEqual(
@@ -189,8 +189,8 @@ test("#serialize - can serialize a simple resource with only attributes", functi
         type: 'planet',
         attributes: {
           name: 'Jupiter',
-          classification: 'gas giant'
-        }
+          classification: 'gas giant',
+        },
       }
     ),
     {
@@ -198,15 +198,15 @@ test("#serialize - can serialize a simple resource with only attributes", functi
         type: 'planets',
         attributes: {
           name: 'Jupiter',
-          classification: 'gas giant'
-        }
-      }
+          classification: 'gas giant',
+        },
+      },
     },
     'serialized document matches'
   );
 });
 
-test("#serialize - can serialize a resource with attributes and has-many relationships", function() {
+test('#serialize - can serialize a resource with attributes and has-many relationships', function() {
   setupWithLocalIds();
 
   schema.normalize({type: 'planet', id: 'p1', keys: {remoteId: 'p1-id'}});
@@ -220,16 +220,16 @@ test("#serialize - can serialize a resource with attributes and has-many relatio
         id: 'p1',
         attributes: {
           name: 'Jupiter',
-          classification: 'gas giant'
+          classification: 'gas giant',
         },
         relationships: {
           moons: {
             data: {
               'moon:m1': true,
-              'moon:m2': true
-            }
-          }
-        }
+              'moon:m2': true,
+            },
+          },
+        },
       }
     ),
     {
@@ -238,23 +238,23 @@ test("#serialize - can serialize a resource with attributes and has-many relatio
         id: 'p1-id',
         attributes: {
           name: 'Jupiter',
-          classification: 'gas giant'
+          classification: 'gas giant',
         },
         relationships: {
           moons: {
             data: [
               { type: 'moons', id: 'm1-id' },
-              { type: 'moons', id: 'm2-id' }
-            ]
-          }
-        }
-      }
+              { type: 'moons', id: 'm2-id' },
+            ],
+          },
+        },
+      },
     },
     'serialized document matches'
   );
 });
 
-test("#serialize - can serialize a resource with attributes and a null has-one relationship", function() {
+test('#serialize - can serialize a resource with attributes and a null has-one relationship', function() {
   setupWithLocalIds();
 
   schema.normalize({type: 'planet', id: 'p1', keys: {remoteId: 'p1-id'}});
@@ -270,9 +270,9 @@ test("#serialize - can serialize a resource with attributes and a null has-one r
         },
         relationships: {
           planet: {
-            data: null
-          }
-        }
+            data: null,
+          },
+        },
       }
     ),
     {
@@ -280,18 +280,18 @@ test("#serialize - can serialize a resource with attributes and a null has-one r
         type: 'moons',
         id: 'm1-id',
         attributes: {
-          name: 'Io'
+          name: 'Io',
         },
         relationships: {
-          planet: { data: null }
-        }
-      }
+          planet: { data: null },
+        },
+      },
     },
     'deserialized document matches'
   );
 });
 
-test("#serialize - can serialize a resource with attributes and a has-one relationships", function() {
+test('#serialize - can serialize a resource with attributes and a has-one relationships', function() {
   setupWithLocalIds();
 
   schema.normalize({type: 'planet', id: 'p1', keys: {remoteId: 'p1-id'}});
@@ -307,9 +307,9 @@ test("#serialize - can serialize a resource with attributes and a has-one relati
         },
         relationships: {
           planet: {
-            data: 'planet:p1'
-          }
-        }
+            data: 'planet:p1',
+          },
+        },
       }
     ),
     {
@@ -317,28 +317,28 @@ test("#serialize - can serialize a resource with attributes and a has-one relati
         type: 'moons',
         id: 'm1-id',
         attributes: {
-          name: 'Io'
+          name: 'Io',
         },
         relationships: {
           planet: {
-            data: { type: 'planets', id: 'p1-id' }
-          }
-        }
-      }
+            data: { type: 'planets', id: 'p1-id' },
+          },
+        },
+      },
     },
     'deserialized document matches'
   );
 });
 
-test("#deserialize - can deserialize a simple resource with only type and id - using local IDs", function() {
+test('#deserialize - can deserialize a simple resource with only type and id - using local IDs', function() {
   setupWithLocalIds();
 
   var result = serializer.deserialize(
     {
       data: {
         type: 'planets',
-        id: '123'
-      }
+        id: '123',
+      },
     }
   );
   var record = result.primary;
@@ -350,31 +350,31 @@ test("#deserialize - can deserialize a simple resource with only type and id - u
       id: record.id,
       type: 'planet',
       keys: {
-        remoteId: '123'
+        remoteId: '123',
       },
       attributes: {
         classification: undefined,
-        name: undefined
+        name: undefined,
       },
       relationships: {
         moons: {
-          data: undefined
-        }
-      }
+          data: undefined,
+        },
+      },
     },
     'deserialized document matches'
   );
 });
 
-test("#deserialize - can deserialize a simple resource with only type and id - using UUIDs", function() {
+test('#deserialize - can deserialize a simple resource with only type and id - using UUIDs', function() {
   setupWithUUIDs();
 
   var result = serializer.deserialize(
     {
       data: {
         type: 'planets',
-        id: '123'
-      }
+        id: '123',
+      },
     }
   );
   var record = result.primary;
@@ -387,19 +387,19 @@ test("#deserialize - can deserialize a simple resource with only type and id - u
       id: '123',
       attributes: {
         classification: undefined,
-        name: undefined
+        name: undefined,
       },
       relationships: {
         moons: {
-          data: undefined
-        }
-      }
+          data: undefined,
+        },
+      },
     },
     'serialized document matches'
   );
 });
 
-test("#deserialize - can deserialize a compound document - using local IDs", function() {
+test('#deserialize - can deserialize a compound document - using local IDs', function() {
   setupWithLocalIds();
 
   var result = serializer.deserialize(
@@ -409,22 +409,22 @@ test("#deserialize - can deserialize a compound document - using local IDs", fun
         type: 'planets',
         attributes: {
           name: 'Jupiter',
-          classification: 'gas giant'
+          classification: 'gas giant',
         },
         relationships: {
-          moons: {data: [{type: 'moons', id: '5'}]}
-        }
+          moons: {data: [{type: 'moons', id: '5'}]},
+        },
       },
       included: [{
         id: '5',
         type: 'moons',
         attributes: {
-          name: 'Io'
+          name: 'Io',
         },
         relationships: {
-          planet: {data: {type: 'planets', id: '12345'}}
-        }
-      }]
+          planet: {data: {type: 'planets', id: '12345'}},
+        },
+      },],
     }
   );
 
@@ -449,9 +449,9 @@ test("#deserialize - can deserialize a compound document - using local IDs", fun
         },
         relationships: {
           moons: {
-            data: planetsMoons
-          }
-        }
+            data: planetsMoons,
+          },
+        },
       },
       included: [
         {
@@ -459,24 +459,24 @@ test("#deserialize - can deserialize a compound document - using local IDs", fun
           type: 'moon',
           id: moon.id,
           keys: {
-            remoteId: '5'
+            remoteId: '5',
           },
           attributes: {
             name: 'Io',
           },
           relationships: {
             planet: {
-              data: toIdentifier('planet', planet.id)
-            }
-          }
-        }
+              data: toIdentifier('planet', planet.id),
+            },
+          },
+        },
       ],
     },
     'deserialized document matches'
   );
 });
 
-test("#deserialize - can deserialize a compound document - using UUIDs", function() {
+test('#deserialize - can deserialize a compound document - using UUIDs', function() {
   setupWithUUIDs();
 
   var result = serializer.deserialize(
@@ -486,22 +486,22 @@ test("#deserialize - can deserialize a compound document - using UUIDs", functio
         type: 'planets',
         attributes: {
           name: 'Jupiter',
-          classification: 'gas giant'
+          classification: 'gas giant',
         },
         relationships: {
-          moons: {data: [{type: 'moons', id: '5'}]}
-        }
+          moons: {data: [{type: 'moons', id: '5'}]},
+        },
       },
       included: [{
         id: '5',
         type: 'moons',
         attributes: {
-          name: 'Io'
+          name: 'Io',
         },
         relationships: {
-          planet: {data: {type: 'planets', id: '12345'}}
-        }
-      }]
+          planet: {data: {type: 'planets', id: '12345'}},
+        },
+      },],
     }
   );
 
@@ -514,15 +514,15 @@ test("#deserialize - can deserialize a compound document - using UUIDs", functio
         id: '12345',
         attributes: {
           classification: 'gas giant',
-          name: 'Jupiter'
+          name: 'Jupiter',
         },
         relationships: {
           moons: {
             data: {
-              'moon:5': true
-            }
-          }
-        }
+              'moon:5': true,
+            },
+          },
+        },
       },
       included: [
         {
@@ -530,14 +530,14 @@ test("#deserialize - can deserialize a compound document - using UUIDs", functio
           type: 'moon',
           id: '5',
           attributes: {
-            name: 'Io'
+            name: 'Io',
           },
           relationships: {
             planet: {
-              data: 'planet:12345'
-            }
-          }
-        }
+              data: 'planet:12345',
+            },
+          },
+        },
       ],
     },
     'deserialized document matches'

@@ -5,15 +5,15 @@ import { equalOps } from 'tests/test-helper';
 
 ///////////////////////////////////////////////////////////////////////////////
 
-module("Orbit - TransformResult", {
+module('Orbit - TransformResult', {
 });
 
-test("it exists", function() {
+test('it exists', function() {
   var result = new TransformResult();
   ok(result);
 });
 
-test("it can be initialized with operations and inverseOperations", function() {
+test('it can be initialized with operations and inverseOperations', function() {
   expect(2);
 
   var addOp = new Operation({op: 'add', path: 'planet/1', value: {id: '1'}});
@@ -25,7 +25,7 @@ test("it can be initialized with operations and inverseOperations", function() {
   equalOps(result.inverseOperations, [removeOp], 'inverse operations match');
 });
 
-test("#push can add operations and inverseOperations", function() {
+test('#push can add operations and inverseOperations', function() {
   expect(2);
 
   var addOp = new Operation({op: 'add', path: 'planet/1', value: {id: '1'}});
@@ -39,7 +39,7 @@ test("#push can add operations and inverseOperations", function() {
   equalOps(result.inverseOperations, [removeOp], 'inverse operations match');
 });
 
-test("#concat can add the contents of another result", function() {
+test('#concat can add the contents of another result', function() {
   expect(2);
 
   var addOp = new Operation({op: 'add', path: 'planet/1', value: {id: '1'}});
@@ -54,7 +54,7 @@ test("#concat can add the contents of another result", function() {
   equalOps(result2.inverseOperations, [removeOp], 'inverse operations match');
 });
 
-test("#isEmpty returns true if no operations have been added", function() {
+test('#isEmpty returns true if no operations have been added', function() {
   expect(2);
 
   var result = new TransformResult();
@@ -62,7 +62,7 @@ test("#isEmpty returns true if no operations have been added", function() {
   equal(result.isEmpty(), true);
 
   result.push([
-    {op: 'add', path: 'planet/2', value: {id: '2'}}
+    {op: 'add', path: 'planet/2', value: {id: '2'}},
   ]);
 
   equal(result.isEmpty(), false);

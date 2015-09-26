@@ -18,7 +18,7 @@ var server,
     memToRestConnector,
     restToMemConnector;
 
-module("Integration - Rest / Memory / Local Transforms (Blocking)", {
+module('Integration - Rest / Memory / Local Transforms (Blocking)', {
   setup: function() {
     Orbit.Promise = Promise;
     Orbit.ajax = jQuery.ajax;
@@ -32,17 +32,17 @@ module("Integration - Rest / Memory / Local Transforms (Blocking)", {
       modelDefaults: {
         keys: {
           '__id': {primaryKey: true, defaultValue: uuid},
-          'id': {}
-        }
+          'id': {},
+        },
       },
       models: {
         planet: {
           attributes: {
             name: {type: 'string'},
-            classification: {type: 'string'}
-          }
-        }
-      }
+            classification: {type: 'string'},
+          },
+        },
+      },
     });
 
     // Create sources
@@ -67,17 +67,18 @@ module("Integration - Rest / Memory / Local Transforms (Blocking)", {
     memorySource = restSource = localSource = null;
 
     server.restore();
-  }
+  },
 });
 
-test("single records found with rest should be inserted into memory and local storage", function() {
+test('single records found with rest should be inserted into memory and local storage', function() {
   expect(4);
   server.respondWith('GET', '/planets/12345', function(xhr) {
-      ok(true, 'GET request');
-      xhr.respond(200,
-                  {'Content-Type': 'application/json'},
-                  JSON.stringify({data: {type: 'planets', id: '12345', attributes: {name: 'Jupiter', classification: 'gas giant'}}}));
+    ok(true, 'GET request');
+    xhr.respond(200,
+                {'Content-Type': 'application/json'},
+                JSON.stringify({data: {type: 'planets', id: '12345', attributes: {name: 'Jupiter', classification: 'gas giant'}}}));
   });
+
   stop();
   restSource.find('planet', {id: '12345'}).then(function(planets) {
     start();
@@ -87,17 +88,18 @@ test("single records found with rest should be inserted into memory and local st
   });
 });
 
-test("multiple records found with rest should be inserted into memory and local storage", function() {
+test('multiple records found with rest should be inserted into memory and local storage', function() {
   expect(4);
   server.respondWith('GET', '/planets', function(xhr) {
-      ok(true, 'GET request');
-      xhr.respond(200,
-                  {'Content-Type': 'application/json'},
-                  JSON.stringify({data: [
-                    {type: 'planets', id: '12345', attributes: {name: 'Jupiter', classification: 'gas giant'}},
-                    {type: 'planets', id: '12346', attributes: {name: 'Earth', classification: 'terrestrial'}}
-                  ]}));
+    ok(true, 'GET request');
+    xhr.respond(200,
+                {'Content-Type': 'application/json'},
+                JSON.stringify({data: [
+                  {type: 'planets', id: '12345', attributes: {name: 'Jupiter', classification: 'gas giant'}},
+                  {type: 'planets', id: '12346', attributes: {name: 'Earth', classification: 'terrestrial'}},
+                ],}));
   });
+
   stop();
   restSource.find('planet').then(function(planets) {
     start();
@@ -107,17 +109,18 @@ test("multiple records found with rest should be inserted into memory and local 
   });
 });
 
-test("records will be matched with existing records if find is called mutiple times", function() {
+test('records will be matched with existing records if find is called mutiple times', function() {
   expect(8);
   server.respondWith('GET', '/planets', function(xhr) {
-      ok(true, 'GET request');
-      xhr.respond(200,
-                  {'Content-Type': 'application/json'},
-                  JSON.stringify({data: [
-                    {type: 'planets', id: '12345', attributes: {name: 'Jupiter', classification: 'gas giant'}},
-                    {type: 'planets', id: '12346', attributes: {name: 'Earth', classification: 'terrestrial'}}
-                  ]}));
+    ok(true, 'GET request');
+    xhr.respond(200,
+                {'Content-Type': 'application/json'},
+                JSON.stringify({data: [
+                  {type: 'planets', id: '12345', attributes: {name: 'Jupiter', classification: 'gas giant'}},
+                  {type: 'planets', id: '12346', attributes: {name: 'Earth', classification: 'terrestrial'}},
+                ],}));
   });
+
   stop();
   restSource.find('planet').then(function(planets) {
     equal(memorySource.length('planet'), 2, 'memory source cache size should == 2');
@@ -133,7 +136,7 @@ test("records will be matched with existing records if find is called mutiple ti
   });
 });
 
-test("records inserted into memory should be posted with rest", function() {
+test('records inserted into memory should be posted with rest', function() {
   expect(8);
 
   server.respondWith('POST', '/planets', function(xhr) {
@@ -157,7 +160,7 @@ test("records inserted into memory should be posted with rest", function() {
   });
 });
 
-test("records posted with rest should be inserted into memory", function() {
+test('records posted with rest should be inserted into memory', function() {
   expect(8);
 
   server.respondWith('POST', '/planets', function(xhr) {
@@ -181,7 +184,7 @@ test("records posted with rest should be inserted into memory", function() {
   });
 });
 
-test("records updated in memory should be updated with rest", function() {
+test('records updated in memory should be updated with rest', function() {
   expect(9);
 
   server.respondWith('POST', '/planets', function(xhr) {
@@ -190,6 +193,7 @@ test("records updated in memory should be updated with rest", function() {
                 {'Content-Type': 'application/json'},
                 JSON.stringify({data: {type: 'planets', id: '12345', attributes: {name: 'Jupiter', classification: 'gas giant'}}}));
   });
+
   server.respondWith('PATCH', '/planets/12345', function(xhr) {
     deepEqual(JSON.parse(xhr.requestBody), {data: {type: 'planets', id: '12345', attributes: {name: 'Earth'}}}, 'PATCH request');
     xhr.respond(200,
@@ -217,7 +221,7 @@ test("records updated in memory should be updated with rest", function() {
   });
 });
 
-test("records updated with rest should be updated in memory", function() {
+test('records updated with rest should be updated in memory', function() {
   expect(9);
 
   server.respondWith('POST', '/planets', function(xhr) {
@@ -226,6 +230,7 @@ test("records updated with rest should be updated in memory", function() {
                 {'Content-Type': 'application/json'},
                 JSON.stringify({data: {type: 'planets', id: '12345', attributes: {name: 'Jupiter', classification: 'gas giant'}}}));
   });
+
   server.respondWith('PATCH', '/planets/12345', function(xhr) {
     deepEqual(JSON.parse(xhr.requestBody), {data: {type: 'planets', id: '12345', attributes: {name: 'Earth', classification: 'terrestrial'}}}, 'PATCH request');
     xhr.respond(200,
@@ -254,7 +259,7 @@ test("records updated with rest should be updated in memory", function() {
   });
 });
 
-test("records patched in memory should be patched with rest", function() {
+test('records patched in memory should be patched with rest', function() {
   expect(7);
 
   server.respondWith('POST', '/planets', function(xhr) {
@@ -263,6 +268,7 @@ test("records patched in memory should be patched with rest", function() {
                 {'Content-Type': 'application/json'},
                 JSON.stringify({data: {type: 'planets', id: '12345', attributes: {name: 'Jupiter', classification: 'gas giant'}}}));
   });
+
   server.respondWith('PATCH', '/planets/12345', function(xhr) {
     deepEqual(JSON.parse(xhr.requestBody), {data: {type: 'planets', id: '12345', attributes: {classification: 'terrestrial'}}}, 'PATCH request');
     xhr.respond(200,
@@ -285,7 +291,7 @@ test("records patched in memory should be patched with rest", function() {
   });
 });
 
-test("records patched with rest should be patched in memory", function() {
+test('records patched with rest should be patched in memory', function() {
   expect(9);
 
   server.respondWith('POST', '/planets', function(xhr) {
@@ -294,6 +300,7 @@ test("records patched with rest should be patched in memory", function() {
                 {'Content-Type': 'application/json'},
                 JSON.stringify({data: {type: 'planets', id: '12345', attributes: {name: 'Jupiter', classification: 'gas giant'}}}));
   });
+
   server.respondWith('PATCH', '/planets/12345', function(xhr) {
     deepEqual(JSON.parse(xhr.requestBody), {data: {type: 'planets', id: '12345', attributes: {classification: 'terrestrial'}}}, 'PUT request');
     xhr.respond(200,
@@ -320,7 +327,7 @@ test("records patched with rest should be patched in memory", function() {
   });
 });
 
-test("records deleted in memory should be deleted with rest", function() {
+test('records deleted in memory should be deleted with rest', function() {
   expect(5);
 
   server.respondWith('POST', '/planets', function(xhr) {
@@ -329,6 +336,7 @@ test("records deleted in memory should be deleted with rest", function() {
                 {'Content-Type': 'application/json'},
                 JSON.stringify({data: {type: 'planets', id: '12345', attributes: {name: 'Jupiter', classification: 'gas giant'}}}));
   });
+
   server.respondWith('DELETE', '/planets/12345', function(xhr) {
     deepEqual(JSON.parse(xhr.requestBody), null, 'DELETE request');
     xhr.respond(200,
@@ -348,7 +356,7 @@ test("records deleted in memory should be deleted with rest", function() {
   });
 });
 
-test("records deleted with rest should be deleted in memory", function() {
+test('records deleted with rest should be deleted in memory', function() {
   expect(5);
 
   server.respondWith('POST', '/planets', function(xhr) {
@@ -357,6 +365,7 @@ test("records deleted with rest should be deleted in memory", function() {
                 {'Content-Type': 'application/json'},
                 JSON.stringify({data: {type: 'planets', id: '12345', attributes: {name: 'Jupiter', classification: 'gas giant'}}}));
   });
+
   server.respondWith('DELETE', '/planets/12345', function(xhr) {
     deepEqual(JSON.parse(xhr.requestBody), null, 'DELETE request');
     xhr.respond(200,

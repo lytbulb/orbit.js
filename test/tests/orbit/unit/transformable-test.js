@@ -8,7 +8,7 @@ var source;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-module("Orbit - Transformable", {
+module('Orbit - Transformable', {
   setup: function() {
     Orbit.Promise = Promise;
     source = {};
@@ -17,33 +17,32 @@ module("Orbit - Transformable", {
   teardown: function() {
     source = null;
     Orbit.Promise = null;
-  }
+  },
 });
 
-test("it exists", function() {
+test('it exists', function() {
   Transformable.extend(source);
   ok(source);
 });
 
-test("it should mixin Evented", function() {
+test('it should mixin Evented', function() {
   Transformable.extend(source);
   ['on', 'off', 'emit', 'poll'].forEach(function(prop) {
     ok(source[prop], 'should have Evented properties');
   });
 });
 
-test("it defines `transform`", function() {
+test('it defines `transform`', function() {
   Transformable.extend(source);
   ok(source.transform, 'transform exists');
 });
 
-test("it should require the definition of _transform", function() {
+test('it should require the definition of _transform', function() {
   Transformable.extend(source);
-  throws(source._transform, "presence of _transform should be verified");
+  throws(source._transform, 'presence of _transform should be verified');
 });
 
-
-test("it should resolve when _transform returns a promise", function() {
+test('it should resolve when _transform returns a promise', function() {
   expect(3);
 
   source._transform = function(o) {
@@ -64,7 +63,7 @@ test("it should resolve when _transform returns a promise", function() {
     });
 });
 
-test("it should resolve when _transform simply returns (without a promise)", function() {
+test('it should resolve when _transform simply returns (without a promise)', function() {
   expect(3);
 
   source._transform = function() {
@@ -83,7 +82,7 @@ test("it should resolve when _transform simply returns (without a promise)", fun
     });
 });
 
-test("it should trigger `didTransform` event BEFORE a transform resolves", function() {
+test('it should trigger `didTransform` event BEFORE a transform resolves', function() {
   expect(5);
 
   var order = 0,
@@ -109,7 +108,7 @@ test("it should trigger `didTransform` event BEFORE a transform resolves", funct
   });
 });
 
-test("it should perform transforms in the order they are pushed", function() {
+test('it should perform transforms in the order they are pushed', function() {
   expect(4);
 
   var order = 0,
@@ -134,7 +133,7 @@ test("it should perform transforms in the order they are pushed", function() {
   });
 });
 
-test("it should wait for the current settle loop before starting another", function() {
+test('it should wait for the current settle loop before starting another', function() {
   expect(8);
 
   var order = 0,
@@ -166,6 +165,7 @@ test("it should wait for the current settle loop before starting another", funct
       equal(++order, 2, 'didTransform triggered after `add` transform');
       equalOps(transform.operations, addOps, '`add` operation matches');
     }
+
     if (transform.operations[0].op === 'remove') {
       equal(++order, 4, 'didTransform triggered after `remove` transform');
       equalOps(transform.operations, inverseOps, '`remove` operation matches');
@@ -180,7 +180,7 @@ test("it should wait for the current settle loop before starting another", funct
   });
 });
 
-test("#clearTransformLog can clear the log of any applied transforms", function() {
+test('#clearTransformLog can clear the log of any applied transforms', function() {
   expect(2);
 
   source._transform = function() {

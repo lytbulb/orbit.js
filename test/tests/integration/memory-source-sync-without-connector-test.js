@@ -5,8 +5,8 @@ import { Promise } from 'rsvp';
 
 const schemaDefinition = {
   models: {
-    planet: {}
-  }
+    planet: {},
+  },
 };
 
 var primarySource,
@@ -14,7 +14,7 @@ var primarySource,
 
 ///////////////////////////////////////////////////////////////////////////////
 
-module("Integration - MemorySource Sync without Connector", {
+module('Integration - MemorySource Sync without Connector', {
   setup: function() {
     Orbit.Promise = Promise;
 
@@ -32,10 +32,10 @@ module("Integration - MemorySource Sync without Connector", {
 
   teardown: function() {
     primarySource = backupSource = null;
-  }
+  },
 });
 
-test("both sources exist and are empty", function() {
+test('both sources exist and are empty', function() {
   ok(primarySource);
   ok(backupSource);
 
@@ -43,7 +43,7 @@ test("both sources exist and are empty", function() {
   equal(backupSource.length('planet'), 0, 'source should be empty');
 });
 
-test("records inserted into the primary source should be automatically copied to the backup source", function() {
+test('records inserted into the primary source should be automatically copied to the backup source', function() {
   expect(9);
 
   var originalPlanet;
@@ -69,7 +69,7 @@ test("records inserted into the primary source should be automatically copied to
   });
 });
 
-test("updates to records in the primary source should be automatically copied to the backup source", function() {
+test('updates to records in the primary source should be automatically copied to the backup source', function() {
   expect(7);
 
   var originalPlanet;
@@ -96,7 +96,7 @@ test("updates to records in the primary source should be automatically copied to
   });
 });
 
-test("patches to records in the primary source should be automatically copied to the backup source", function() {
+test('patches to records in the primary source should be automatically copied to the backup source', function() {
   expect(4);
 
   var originalPlanet;
@@ -117,7 +117,7 @@ test("patches to records in the primary source should be automatically copied to
   });
 });
 
-test("records deleted in the primary source should be automatically deleted in the backup source", function() {
+test('records deleted in the primary source should be automatically deleted in the backup source', function() {
   expect(6);
 
   equal(primarySource.length('planet'), 0, 'primary source should be empty');

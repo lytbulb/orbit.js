@@ -6,6 +6,7 @@ var transpileES6 = require('broccoli-babel-transpiler');
 var jshintTree = require('broccoli-jshint');
 var replace    = require('broccoli-string-replace');
 var gitVersion = require('git-repo-version');
+var jscs = require('broccoli-jscs');
 
 // extract version from git
 // note: remove leading `v` (since by default our tags use a `v` prefix)
@@ -70,6 +71,11 @@ var tests = new Funnel('test', {
   destDir: '/tests'
 });
 
+tests = jscs(tests, {
+  esnext: true,
+  enabled: true
+});
+
 var buildExtras = new Funnel('build-support', {
   srcDir: '/',
   destDir: '/',
@@ -89,6 +95,10 @@ packages.forEach(function(package) {
   });
 
   main[package.name] = mergeTrees([ lib[package.name] ]);
+  main[package.name] = jscs(main[package.name], {
+    esnext: true,
+    enabled: true
+  });
   main[package.name] = new compileES6Modules(main[package.name]);
   main[package.name] = new transpileES6(main[package.name]);
   main[package.name] = concat(main[package.name], {
